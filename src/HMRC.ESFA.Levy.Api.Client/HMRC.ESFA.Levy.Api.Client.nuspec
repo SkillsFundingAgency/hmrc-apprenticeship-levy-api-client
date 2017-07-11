@@ -7,7 +7,7 @@
     <authors>scottcowan</authors>
     <owners>scottcowan</owners>
     <licenseUrl>http://www.apache.org/licenses/LICENSE-2.0.html</licenseUrl>
-    <projectUrl>https://github.com/scottcowan/dfe-edubase2-soapapi-client</projectUrl>
+    <projectUrl>https://github.com/SkillsFundingAgency/hmrc-apprenticeship-levy-api-client</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>Returns apprenticeship levy information from HMRC</description>
     <summary>HMRC Apprenticeship Levy API Client</summary>
