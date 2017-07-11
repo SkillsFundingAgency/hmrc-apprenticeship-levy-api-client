@@ -16,6 +16,7 @@
     <dependencies>
       <group targetFramework=".NETFramework4.5.2">
         <dependency id="Newtonsoft.Json" version="9.0.1" />
+      <dependency id="HMRC.ESFA.Levy.Api.Types" version="$version$" />
       </group>
     </dependencies>
   </metadata>
