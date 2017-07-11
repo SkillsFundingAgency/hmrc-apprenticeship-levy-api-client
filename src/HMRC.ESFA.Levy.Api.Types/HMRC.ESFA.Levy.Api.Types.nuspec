@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+  <metadata>
+    <id>HMRC.ESFA.Levy.Api.Types</id>
+    <version>$version$</version>
+    <title>HMRC Apprenticeship Levy API Types</title>
+    <authors>scottcowan</authors>
+    <owners>scottcowan</owners>
+    <licenseUrl>http://www.apache.org/licenses/LICENSE-2.0.html</licenseUrl>
+    <projectUrl>https://github.com/scottcowan/dfe-edubase2-soapapi-client</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Returns apprenticeship levy information from HMRC</description>
+    <summary>HMRC Apprenticeship Levy API Types</summary>
+    <tags>HMRC Apprenticeship API</tags>
+    <language>en-GB</language>
+    <dependencies>
+      <group targetFramework=".NETFramework4.5.2">
+        <dependency id="Newtonsoft.Json" version="9.0.1" />
+      </group>
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="bin\Release\HMRC.ESFA.Levy.Api.Types.dll" target="lib\net452" />
+  </files>
+</package>
