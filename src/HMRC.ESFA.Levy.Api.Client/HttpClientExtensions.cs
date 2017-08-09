@@ -47,6 +47,7 @@ namespace HMRC.ESFA.Levy.Api.Client
 
         private static async Task EnsureSuccessfulResponse(HttpResponseMessage response)
         {
+            string body = null;
             if (response.IsSuccessStatusCode)
             {
                 return;
@@ -56,12 +57,12 @@ namespace HMRC.ESFA.Levy.Api.Client
 
             if (response.Content != null)
             {
-                var value = await response.Content.ReadAsStringAsync();
-                if (value.Contains("<body>"))
+                body = await response.Content.ReadAsStringAsync();
+                if (body.Contains("<body>"))
                 {
                     var pattern = "([[])(.*)([]])";
 
-                    var matches = Regex.Matches(value, pattern);
+                    var matches = Regex.Matches(body, pattern);
 
                     if (matches.Count > 0)
                     {
@@ -70,7 +71,7 @@ namespace HMRC.ESFA.Levy.Api.Client
                 }
             }
 
-            throw new ApiHttpException((int)response.StatusCode, reason, response.RequestMessage.RequestUri.ToString());
+            throw new ApiHttpException((int)response.StatusCode, reason, body, response.RequestMessage.RequestUri.ToString());
         }
     }
 }

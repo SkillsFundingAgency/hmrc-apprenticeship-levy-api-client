@@ -12,8 +12,11 @@ namespace HMRC.ESFA.Levy.Api.Types.Exceptions
         public int HttpCode => GetHttpCode();
         public string ResourceUri { get; set; }
 
-        public ApiHttpException(int httpCode, string message, string resourceUri, Exception innerException = null) : base(httpCode, message, innerException)
+        public string ResponseBody { get; set; }
+
+        public ApiHttpException(int httpCode, string message, string resourceUri, string body, Exception innerException = null) : base(httpCode, message, innerException)
         {
+            ResponseBody = body;
             ResourceUri = resourceUri;
         }
     }
