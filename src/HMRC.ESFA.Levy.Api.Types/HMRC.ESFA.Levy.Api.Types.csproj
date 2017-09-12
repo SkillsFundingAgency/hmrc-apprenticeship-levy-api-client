@@ -61,6 +61,7 @@
     <Compile Include="Fraction.cs" />
     <Compile Include="FractionCalculation.cs" />
     <Compile Include="LevyDeclarations.cs" />
+    <Compile Include="LevyDeclarationType.cs" />
     <Compile Include="Link.cs" />
     <Compile Include="Links.cs" />
     <Compile Include="Name.cs" />

@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Collections.Specialized;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using System.Web;
+using HMRC.ESFA.Levy.Api.Client.services;
 using HMRC.ESFA.Levy.Api.Types;
 using HMRC.ESFA.Levy.Api.Types.Exceptions;
 
@@ -15,16 +17,18 @@ namespace HMRC.ESFA.Levy.Api.Client
     public class ApprenticeshipLevyApiClient : IApprenticeshipLevyApiClient
     {
         private readonly HttpClient _client;
-
+        private readonly IDeclarationTypeProcessor _declarationTypeProcessor;
         private const string DateFormat = "yyyy-MM-dd";
 
         /// <summary>
         /// Default constuctor
         /// </summary>
         /// <param name="client">A configured HttpClient, alternatively use ApprenticeshipLevyApiClient.CreateHttpClient(token, url)</param>
-        public ApprenticeshipLevyApiClient(HttpClient client)
+        /// <param name="declarationTypeProcessor"></param>
+        public ApprenticeshipLevyApiClient(HttpClient client, IDeclarationTypeProcessor declarationTypeProcessor)
         {
             _client = client;
+            _declarationTypeProcessor = declarationTypeProcessor;
         }
 
         /// <summary>
@@ -45,7 +49,7 @@ namespace HMRC.ESFA.Levy.Api.Client
         /// <returns></returns>
         public async Task<EmpRefLevyInformation> GetEmployerDetails(string empRef)
         {
-            var url = $"apprenticeship-levy/epaye/{HttpUtility.UrlEncode(empRef)}";
+            string url = $"apprenticeship-levy/epaye/{HttpUtility.UrlEncode(empRef)}";
             return await _client.Get<EmpRefLevyInformation>(url);
         }
 
@@ -59,8 +63,8 @@ namespace HMRC.ESFA.Levy.Api.Client
         /// <returns></returns>
         public async Task<LevyDeclarations> GetEmployerLevyDeclarations(string empRef, DateTime? fromDate = null, DateTime? toDate = null)
         {
-            var url = $"apprenticeship-levy/epaye/{HttpUtility.UrlEncode(empRef)}/declarations";
-            var parameters = HttpUtility.ParseQueryString(string.Empty);
+            string url = $"apprenticeship-levy/epaye/{HttpUtility.UrlEncode(empRef)}/declarations";
+            NameValueCollection parameters = HttpUtility.ParseQueryString(string.Empty);
 
             if (fromDate.HasValue)
             {
@@ -77,7 +81,9 @@ namespace HMRC.ESFA.Levy.Api.Client
                 url += "?" + parameters;
             }
 
-            return await _client.Get<LevyDeclarations>(url);
+            var levyDeclarations =  await _client.Get<LevyDeclarations>(url);
+            levyDeclarations.Declarations = _declarationTypeProcessor.ProcessDeclarationEntryTypes(levyDeclarations.Declarations);
+            return levyDeclarations;
         }
 
         /// <summary>
@@ -90,8 +96,8 @@ namespace HMRC.ESFA.Levy.Api.Client
         /// <returns></returns>
         public async Task<EnglishFractionDeclarations> GetEmployerFractionCalculations(string empRef, DateTime? fromDate = null, DateTime? toDate = null)
         {
-            var url = $"apprenticeship-levy/epaye/{HttpUtility.UrlEncode(empRef)}/fractions";
-            var parameters = HttpUtility.ParseQueryString(string.Empty);
+            string url = $"apprenticeship-levy/epaye/{HttpUtility.UrlEncode(empRef)}/fractions";
+            NameValueCollection parameters = HttpUtility.ParseQueryString(string.Empty);
 
             if (fromDate.HasValue)
             {
@@ -122,8 +128,8 @@ namespace HMRC.ESFA.Levy.Api.Client
         /// <returns></returns>
         public async Task<EmploymentStatus> GetEmploymentStatus(string empRef, string nino, DateTime? fromDate = null, DateTime? toDate = null)
         {
-            var url = $"apprenticeship-levy/epaye/{HttpUtility.UrlEncode(empRef)}/employed/{nino}";
-            var parameters = HttpUtility.ParseQueryString(string.Empty);
+            string url = $"apprenticeship-levy/epaye/{HttpUtility.UrlEncode(empRef)}/employed/{nino}";
+            NameValueCollection parameters = HttpUtility.ParseQueryString(string.Empty);
 
             if (fromDate.HasValue)
             {
@@ -162,7 +168,7 @@ namespace HMRC.ESFA.Levy.Api.Client
         /// <returns></returns>
         public static HttpClient CreateHttpClient(string authToken, string baseUrl)
         {
-            var client = new HttpClient();
+            HttpClient client = new HttpClient();
             client.BaseAddress = new Uri(baseUrl);
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", authToken);
             return client;

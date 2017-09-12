@@ -12,8 +12,8 @@ namespace HMRC.ESFA.Levy.Api.Client
         private const string Accept = "application/vnd.hmrc.1.0+json";
         internal static async Task<string> SendMessage<T>(this HttpClient httpClient, T content, string url)
         {
-                var serializeObject = JsonConvert.SerializeObject(content);
-                var response = await httpClient.SendAsync(new HttpRequestMessage(HttpMethod.Post, url)
+                string serializeObject = JsonConvert.SerializeObject(content);
+                HttpResponseMessage response = await httpClient.SendAsync(new HttpRequestMessage(HttpMethod.Post, url)
                 {
                     Content = new StringContent(serializeObject, Encoding.UTF8, Accept)
                 });
@@ -24,19 +24,19 @@ namespace HMRC.ESFA.Levy.Api.Client
 
         internal static async Task<T> Get<T>(this HttpClient httpClient, string url)
         {
-                var response = await httpClient.SendAsync(new HttpRequestMessage(HttpMethod.Get, url)
+                HttpResponseMessage response = await httpClient.SendAsync(new HttpRequestMessage(HttpMethod.Get, url)
                 {
                     Headers = { {"accept", Accept } }
                 });
                 await EnsureSuccessfulResponse(response);
 
-            var value = await response.Content.ReadAsStringAsync();
+            string value = await response.Content.ReadAsStringAsync();
             return JsonConvert.DeserializeObject<T>(value);
         }
 
         internal static async Task<string> GetString(this HttpClient httpClient, string url)
         {
-                var response = await httpClient.SendAsync(new HttpRequestMessage(HttpMethod.Get, url)
+                HttpResponseMessage response = await httpClient.SendAsync(new HttpRequestMessage(HttpMethod.Get, url)
                 {
                     Headers = { { "accept", Accept } }
                 });
@@ -53,16 +53,16 @@ namespace HMRC.ESFA.Levy.Api.Client
                 return;
             }
 
-            var reason = response.ReasonPhrase.ToUpper();
+            string reason = response.ReasonPhrase.ToUpper();
 
             if (response.Content != null)
             {
                 body = await response.Content.ReadAsStringAsync();
                 if (body.Contains("<body>"))
                 {
-                    var pattern = "([[])(.*)([]])";
+                    string pattern = "([[])(.*)([]])";
 
-                    var matches = Regex.Matches(body, pattern);
+                    MatchCollection matches = Regex.Matches(body, pattern);
 
                     if (matches.Count > 0)
                     {
