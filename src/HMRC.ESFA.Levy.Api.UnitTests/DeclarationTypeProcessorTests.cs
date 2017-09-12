@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using HMRC.ESFA.Levy.Api.Client.services;
+using HMRC.ESFA.Levy.Api.Client.Services;
 using HMRC.ESFA.Levy.Api.Types;
 using NUnit.Framework;
 
@@ -30,15 +30,13 @@ namespace HMRC.ESFA.Levy.Api.UnitTests
                     Id = "Late2",
                     SubmissionTime = new DateTime(2017, 12,20, 00,00,00),
                     PayrollPeriod = new PayrollPeriod {Month = 5, Year = "2017"},
-                    LevyDeclarationType = LevyDeclarationType.Unprocessed
-                },
+                  },
                 new Declaration
                 {
                     Id = "unprocessedAndVeryEarly",
                     SubmissionTime = new DateTime(2017, 1,20, 00,00,00),
                     PayrollPeriod = new PayrollPeriod {Month = 5, Year = "2017"},
-                    LevyDeclarationType = LevyDeclarationType.Unprocessed
-                },
+                 },
                 new Declaration
                 {
                     Id = "LastBeforeCutoff",
@@ -50,14 +48,12 @@ namespace HMRC.ESFA.Levy.Api.UnitTests
                     Id = "secondLastBeforeCutoff",
                     SubmissionTime = new DateTime(2017, 08, 19, 10,15,00),
                     PayrollPeriod = new PayrollPeriod {Month = 5, Year = "2017"},
-                    LevyDeclarationType = LevyDeclarationType.Latest
-                },
+                  },
                 new Declaration
                 {
                     Id = "Late1",
                     SubmissionTime = new DateTime(2017, 08, 20, 0,0,0),
                     PayrollPeriod = new PayrollPeriod {Month = 5, Year = "2017"},
-                    LevyDeclarationType =  LevyDeclarationType.Unprocessed
                 }
             };
 
@@ -78,35 +74,35 @@ namespace HMRC.ESFA.Levy.Api.UnitTests
         public void ShouldSetLateEntry1ToLate()
         {
             var expectedLateEntry = _newDeclarations.FirstOrDefault(x => x.Id == "Late1");
-            Assert.AreEqual(expectedLateEntry.LevyDeclarationType, LevyDeclarationType.Late);
+            Assert.AreEqual(expectedLateEntry.LevyDeclarationPaymentStatus, LevyDeclarationPaymentStatus.LatePayment);
         }
 
         [Test]
         public void ShouldSetLateEntry2ToLate()
         {
             var expectedLateEntry = _newDeclarations.FirstOrDefault(x => x.Id == "Late2");
-            Assert.AreEqual(expectedLateEntry.LevyDeclarationType, LevyDeclarationType.Late);
+            Assert.AreEqual(expectedLateEntry.LevyDeclarationPaymentStatus, LevyDeclarationPaymentStatus.LatePayment);
         }
 
         [Test]
         public void ShouldSetUnprocessedAndEarly()
         {
             var expectedLateEntry = _newDeclarations.FirstOrDefault(x => x.Id == "unprocessedAndVeryEarly");
-            Assert.AreEqual(expectedLateEntry.LevyDeclarationType, LevyDeclarationType.Unprocessed);
+            Assert.AreEqual(expectedLateEntry.LevyDeclarationPaymentStatus, LevyDeclarationPaymentStatus.UnprocessedPayment);
         }
 
         [Test]
         public void ShouldSetLastCutoffToLastBeforeCutoff()
         {
             var expectedLateEntry = _newDeclarations.FirstOrDefault(x => x.Id == "LastBeforeCutoff");
-            Assert.AreEqual(expectedLateEntry.LevyDeclarationType, LevyDeclarationType.Latest);
+            Assert.AreEqual(expectedLateEntry.LevyDeclarationPaymentStatus, LevyDeclarationPaymentStatus.LatestPayment);
         }
 
         [Test]
         public void ShouldSetSecondLastCutoffToStandard()
         {
             var expectedLateEntry = _newDeclarations.FirstOrDefault(x => x.Id == "secondLastBeforeCutoff");
-            Assert.AreEqual(expectedLateEntry.LevyDeclarationType, LevyDeclarationType.Unprocessed);
+            Assert.AreEqual(expectedLateEntry.LevyDeclarationPaymentStatus, LevyDeclarationPaymentStatus.UnprocessedPayment);
         }
     }
 }

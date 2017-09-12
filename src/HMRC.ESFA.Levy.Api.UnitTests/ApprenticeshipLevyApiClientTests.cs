@@ -5,7 +5,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web;
 using HMRC.ESFA.Levy.Api.Client;
-using HMRC.ESFA.Levy.Api.Client.services;
+using HMRC.ESFA.Levy.Api.Client.Services;
 using HMRC.ESFA.Levy.Api.Types;
 using HMRC.ESFA.Levy.Api.Types.Exceptions;
 using Moq;

@@ -51,8 +51,8 @@ namespace HMRC.ESFA.Levy.Api.Types
         public decimal LevyAllowanceForFullYear { get; set; }
 
         /// <summary>
-        /// Each LevyDeclaration is either standard, LastPaymentBeforeCutoff, or Late (after Cutoff)
+        /// Each LevyDeclaration is either standard, LastPaymentBeforeCutoff, or LatePayment (after Cutoff)
         /// </summary>
-        public LevyDeclarationType LevyDeclarationType { get; set; }
+        public LevyDeclarationPaymentStatus LevyDeclarationPaymentStatus { get; set; }
     }
 }
