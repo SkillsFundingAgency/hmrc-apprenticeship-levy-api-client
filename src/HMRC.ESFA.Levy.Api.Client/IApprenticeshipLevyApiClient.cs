@@ -33,6 +33,14 @@ namespace HMRC.ESFA.Levy.Api.Client
         Task<LevyDeclarations> GetEmployerLevyDeclarations(string empRef, DateTime? fromDate = null, DateTime? toDate = null);
 
         /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="empRef">A valid employer reference for the PAYE scheme.</param>
+        /// <param name="dateRegistered">The Date the Account was first registered</param>
+        /// <returns></returns>
+        Task<LevyDeclarations> GetEmployerLevyDeclarationsWithPaymentStatus(string empRef, DateTime dateRegistered);
+
+        /// <summary>
         /// Returns a list of fraction calculations for a given employer reference.
         /// </summary>
         /// <param name="empRef">A valid employer reference for the PAYE scheme.</param>

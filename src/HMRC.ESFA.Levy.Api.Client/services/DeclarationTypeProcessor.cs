@@ -7,10 +7,10 @@ namespace HMRC.ESFA.Levy.Api.Client.Services
 {
     public class DeclarationTypeProcessor : IDeclarationTypeProcessor
     {
-        public List<Declaration> ProcessDeclarationEntryTypes(List<Declaration> declarations)
-        {
-            //foreach(var declaration in declarations) declaration.LevyDeclarationPaymentStatus = LevyDeclarationPaymentStatus.UnprocessedPayment;
+        private IDeclarationTypeProcessor _declarationTypeProcessorImplementation;
 
+        public List<Declaration> ProcessDeclarationEntryTypes(List<Declaration> declarations, DateTime dateAdded)
+        {
             var distinctPeriodsInPayroll = declarations
                 .Select(x => int.Parse(x.PayrollPeriod.Year + x.PayrollPeriod.Month.ToString()))
                 .Distinct();
@@ -21,15 +21,18 @@ namespace HMRC.ESFA.Levy.Api.Client.Services
                     .Where(x => int.Parse(x.PayrollPeriod.Year + x.PayrollPeriod.Month.ToString()) == period)
                     .OrderByDescending(x => x.SubmissionTime))
                 {
-                    var targetYear = int.Parse(declaration.PayrollPeriod.Year);
-                    var targetMonth = ExtractTargetMonth(declaration.PayrollPeriod.Month);
-
-                    if (declaration.SubmissionTime >= new DateTime(targetYear, targetMonth, 20))
-                        declaration.LevyDeclarationPaymentStatus = LevyDeclarationPaymentStatus.LatePayment;
-                    else
+                    if (declaration.SubmissionTime >= dateAdded)
                     {
-                        declaration.LevyDeclarationPaymentStatus = LevyDeclarationPaymentStatus.LatestPayment;
-                        break;
+                        var targetYear = int.Parse(declaration.PayrollPeriod.Year);
+                        var targetMonth = ExtractTargetMonth(declaration.PayrollPeriod.Month);
+
+                        if (declaration.SubmissionTime >= new DateTime(targetYear, targetMonth, 20))
+                            declaration.LevyDeclarationPaymentStatus = LevyDeclarationPaymentStatus.LatePayment;
+                        else
+                        {
+                            declaration.LevyDeclarationPaymentStatus = LevyDeclarationPaymentStatus.LatestPayment;
+                            break;
+                        }
                     }
                 }
             }

@@ -49,7 +49,7 @@ namespace HMRC.ESFA.Levy.Api.Client
         /// <returns></returns>
         public async Task<EmpRefLevyInformation> GetEmployerDetails(string empRef)
         {
-            string url = $"apprenticeship-levy/epaye/{HttpUtility.UrlEncode(empRef)}";
+            var url = $"apprenticeship-levy/epaye/{HttpUtility.UrlEncode(empRef)}";
             return await _client.Get<EmpRefLevyInformation>(url);
         }
 
@@ -63,8 +63,8 @@ namespace HMRC.ESFA.Levy.Api.Client
         /// <returns></returns>
         public async Task<LevyDeclarations> GetEmployerLevyDeclarations(string empRef, DateTime? fromDate = null, DateTime? toDate = null)
         {
-            string url = $"apprenticeship-levy/epaye/{HttpUtility.UrlEncode(empRef)}/declarations";
-            NameValueCollection parameters = HttpUtility.ParseQueryString(string.Empty);
+            var url = $"apprenticeship-levy/epaye/{HttpUtility.UrlEncode(empRef)}/declarations";
+            var parameters = HttpUtility.ParseQueryString(string.Empty);
 
             if (fromDate.HasValue)
             {
@@ -81,8 +81,21 @@ namespace HMRC.ESFA.Levy.Api.Client
                 url += "?" + parameters;
             }
             
-            var levyDeclarations =  await _client.Get<LevyDeclarations>(url);
-            levyDeclarations.Declarations = _declarationTypeProcessor.ProcessDeclarationEntryTypes(levyDeclarations.Declarations);
+            return await _client.Get<LevyDeclarations>(url);
+        }
+
+        public async Task<LevyDeclarations> GetEmployerLevyDeclarationsWithPaymentStatus(string empRef, DateTime dateRegistered)
+        {
+            var url = $"apprenticeship-levy/epaye/{HttpUtility.UrlEncode(empRef)}/declarations";
+            var parameters = HttpUtility.ParseQueryString(string.Empty);
+
+            if (parameters.AllKeys.Any())
+            {
+                url += "?" + parameters;
+            }
+
+            var levyDeclarations = await _client.Get<LevyDeclarations>(url);
+            levyDeclarations.Declarations = _declarationTypeProcessor.ProcessDeclarationEntryTypes(levyDeclarations.Declarations, dateRegistered);
             return levyDeclarations;
         }
 
@@ -96,8 +109,8 @@ namespace HMRC.ESFA.Levy.Api.Client
         /// <returns></returns>
         public async Task<EnglishFractionDeclarations> GetEmployerFractionCalculations(string empRef, DateTime? fromDate = null, DateTime? toDate = null)
         {
-            string url = $"apprenticeship-levy/epaye/{HttpUtility.UrlEncode(empRef)}/fractions";
-            NameValueCollection parameters = HttpUtility.ParseQueryString(string.Empty);
+            var url = $"apprenticeship-levy/epaye/{HttpUtility.UrlEncode(empRef)}/fractions";
+            var parameters = HttpUtility.ParseQueryString(string.Empty);
 
             if (fromDate.HasValue)
             {
@@ -128,8 +141,8 @@ namespace HMRC.ESFA.Levy.Api.Client
         /// <returns></returns>
         public async Task<EmploymentStatus> GetEmploymentStatus(string empRef, string nino, DateTime? fromDate = null, DateTime? toDate = null)
         {
-            string url = $"apprenticeship-levy/epaye/{HttpUtility.UrlEncode(empRef)}/employed/{nino}";
-            NameValueCollection parameters = HttpUtility.ParseQueryString(string.Empty);
+            var url = $"apprenticeship-levy/epaye/{HttpUtility.UrlEncode(empRef)}/employed/{nino}";
+            var parameters = HttpUtility.ParseQueryString(string.Empty);
 
             if (fromDate.HasValue)
             {
@@ -168,7 +181,7 @@ namespace HMRC.ESFA.Levy.Api.Client
         /// <returns></returns>
         public static HttpClient CreateHttpClient(string authToken, string baseUrl)
         {
-            HttpClient client = new HttpClient();
+            var client = new HttpClient();
             client.BaseAddress = new Uri(baseUrl);
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", authToken);
             return client;
