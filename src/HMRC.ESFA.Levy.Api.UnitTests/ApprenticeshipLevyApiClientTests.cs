@@ -27,12 +27,12 @@ namespace HMRC.ESFA.Levy.Api.UnitTests
             {
                 new Declaration()
             };
-            var expected = new LevyDeclarations
+            LevyDeclarations expected = new LevyDeclarations
             {
                 EmpRef = "000/AA00000",
                 Declarations = expectedDeclarations
             };
-            var mockHttp = new MockHttpMessageHandler();
+            MockHttpMessageHandler mockHttp = new MockHttpMessageHandler();
             mockHttp.When($"http://localhost/apprenticeship-levy/epaye/{HttpUtility.UrlEncode(expected.EmpRef)}/declarations")
                 .Respond("application/json", JsonConvert.SerializeObject(expected));
 
