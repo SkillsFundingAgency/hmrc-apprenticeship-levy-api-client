@@ -11,24 +11,23 @@ namespace HMRC.ESFA.Levy.Api.Client.Services
         public List<Declaration> ProcessDeclarationEntryTypes(List<Declaration> declarations, DateTime dateAdded)
         {
             var distinctPeriodsInPayroll = declarations
-                .Select(x => int.Parse(x.PayrollPeriod.Year + x.PayrollPeriod.Month.ToString()))
+                .Select(x => x.PayrollPeriod.Year + x.PayrollPeriod.Month.ToString())
                 .Distinct();
 
             foreach (var period in distinctPeriodsInPayroll)
             {
                 foreach (var declaration in declarations
-                    .Where(x => int.Parse(x.PayrollPeriod.Year + x.PayrollPeriod.Month.ToString()) == period)
+                    .Where(x => x.PayrollPeriod.Year + x.PayrollPeriod.Month.ToString() == period)
                     .OrderByDescending(x => x.SubmissionTime))
                 {
 
-                    var dateAddedAfterMainProcessingDate = CheckIfDateAddedFallsAfterCutoffDateForProcessing(dateAdded, declaration);
+                    var dateOfCutoffForProcessing = DateOfCutoffUtc(declaration.PayrollPeriod, 23);
+            
+                    if (dateAdded.ToUniversalTime() >= dateOfCutoffForProcessing) break;
 
-                    if (dateAddedAfterMainProcessingDate) break;
+                    var dateOfCutoffForSubmission = DateOfCutoffUtc(declaration.PayrollPeriod, 20);
 
-                    var targetYear = int.Parse(declaration.PayrollPeriod.Year);
-                    var targetMonth = ExtractTargetMonth(declaration.PayrollPeriod.Month);
-
-                    if (declaration.SubmissionTime >= new DateTime(targetYear, targetMonth, 20))
+                    if (declaration.SubmissionTime.ToUniversalTime() >= dateOfCutoffForSubmission)
                         declaration.LevyDeclarationPaymentStatus = LevyDeclarationPaymentStatus.LatePayment;
                     else
                     {
@@ -41,26 +40,17 @@ namespace HMRC.ESFA.Levy.Api.Client.Services
             return declarations;
         }
 
-        private static bool CheckIfDateAddedFallsAfterCutoffDateForProcessing(DateTime dateAdded, Declaration declaration)
+        private static DateTime DateOfCutoffUtc(PayrollPeriod payrollPeriod, int dateOfCutoff)
         {
-            var monthOfProcessing = ExtractTargetMonth(declaration.PayrollPeriod.Month);
-            var yearOfProcessing = int.Parse(declaration.PayrollPeriod.Year);
+            var monthOfProcessing = payrollPeriod.Month + 4;
+            var yearOfProcessing = 2000 + int.Parse(payrollPeriod.Year.Substring(0, 2));
             if (monthOfProcessing > 12)
-                {
+            {
                 monthOfProcessing = monthOfProcessing - 12;
-                }
+                yearOfProcessing = yearOfProcessing + 1;
+            }
 
-            var dateOfCutoffForProcessing = new DateTime(yearOfProcessing, monthOfProcessing, 23, 00, 00, 00, DateTimeKind.Utc);
-
-            return dateAdded >= dateOfCutoffForProcessing;
-        }
-
-        private static int ExtractTargetMonth(short month)
-        {
-            var targetMonth = month + 4;
-            if (targetMonth > 12)
-                targetMonth = targetMonth - 12;
-            return targetMonth;
+            return new DateTime(yearOfProcessing, monthOfProcessing, dateOfCutoff, 00, 00, 00, DateTimeKind.Utc);
         }
     }
 }
