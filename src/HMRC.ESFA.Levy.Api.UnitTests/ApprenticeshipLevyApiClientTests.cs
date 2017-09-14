@@ -27,12 +27,12 @@ namespace HMRC.ESFA.Levy.Api.UnitTests
             {
                 new Declaration()
             };
-            LevyDeclarations expected = new LevyDeclarations
+            var expected = new LevyDeclarations
             {
                 EmpRef = "000/AA00000",
                 Declarations = expectedDeclarations
             };
-            MockHttpMessageHandler mockHttp = new MockHttpMessageHandler();
+            var mockHttp = new MockHttpMessageHandler();
             mockHttp.When($"http://localhost/apprenticeship-levy/epaye/{HttpUtility.UrlEncode(expected.EmpRef)}/declarations")
                 .Respond("application/json", JsonConvert.SerializeObject(expected));
 
@@ -91,8 +91,8 @@ namespace HMRC.ESFA.Levy.Api.UnitTests
             mockHttp.When($"http://localhost/apprenticeship-levy/epaye/{HttpUtility.UrlEncode(expected.EmpRef)}/declarations")
                 .Respond("application/json", JsonConvert.SerializeObject(expected));
 
-            var mockDeclarationTypeProcessor = new Mock<IDeclarationTypeProcessor>();
-            mockDeclarationTypeProcessor.Setup(x => x.ProcessDeclarationEntryTypes(It.IsAny<List<Declaration>>(), It.IsAny<DateTime>()))
+            var mockDeclarationTypeProcessor = new Mock<IPaymentStatusProcessor>();
+            mockDeclarationTypeProcessor.Setup(x => x.ProcessDeclarationPaymentStatuses(It.IsAny<List<Declaration>>(), It.IsAny<DateTime>()))
                 .Returns(expectedDeclarations);
 
             var httpClient = mockHttp.ToHttpClient();
@@ -100,7 +100,7 @@ namespace HMRC.ESFA.Levy.Api.UnitTests
             var client = new ApprenticeshipLevyApiClient(httpClient, mockDeclarationTypeProcessor.Object);
 
             // Act
-            var declarations = await client.GetEmployerLevyDeclarationsWithPaymentStatus(expected.EmpRef, new DateTime());
+            var declarations = await client.GetEmployerLevyDeclarationsWithPaymentStatuses(expected.EmpRef, new DateTime());
 
             // Assert
             mockHttp.VerifyNoOutstandingExpectation();

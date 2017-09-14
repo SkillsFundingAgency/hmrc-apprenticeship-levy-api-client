@@ -8,45 +8,44 @@ using NUnit.Framework;
 namespace HMRC.ESFA.Levy.Api.UnitTests
 {
     [TestFixture]
-    public class DeclarationTypeProcessorTests
+    public class PaymentStatusesProcessorTests
     {
-        private DeclarationTypeProcessor _processor;
-        private List<Declaration> _declarations;
-        private List<Declaration> _newDeclarationsStandardTests;
-        private List<Declaration> _emptyDeclarations;
-        private List<Declaration> _emptyDeclarationResult;
-        private List<Declaration> _newDeclarationsPassedAccountCreatedDateTests;
-        private List<Declaration> _newDeclarationsAccountCreatedAtStartOfYearTests;
+        private PaymentStatusProcessor _processor;
+        private List<Declaration> _declarationsPostProcessed;
+        private List<Declaration> _emptyDeclarationsPreprocessed;
+        private List<Declaration> _emptyDeclarationPostProcessed;
+        private List<Declaration> _declarationsAfterAccountCreatedDatePostProcessed;
+        private List<Declaration> _declarationsAccountCreatedAtStartOfYearPostProcessed;
         private const string PayrollYear = "17-18";
 
         [SetUp]
         public void Init()
         {
-            _processor = new DeclarationTypeProcessor();
+            _processor = new PaymentStatusProcessor();
 
-            _emptyDeclarations = new List<Declaration>();
+            _emptyDeclarationsPreprocessed = new List<Declaration>();
 
-            _declarations = GetDeclarationList();
+            var declarations = GetDeclarationList();
 
             var declarationsWithPassedAccountCreatedDate = GetDeclarationList();
 
             var dateAccountCreated = new DateTime(2017, 9, 23, 00, 59, 59, DateTimeKind.Local);
 
-            _newDeclarationsStandardTests = _processor.ProcessDeclarationEntryTypes(_declarations, dateAccountCreated);
+            _declarationsPostProcessed = _processor.ProcessDeclarationPaymentStatuses(declarations, dateAccountCreated);
 
-            _emptyDeclarationResult = _processor.ProcessDeclarationEntryTypes(_emptyDeclarations, new DateTime());
+            _emptyDeclarationPostProcessed = _processor.ProcessDeclarationPaymentStatuses(_emptyDeclarationsPreprocessed, new DateTime());
 
             var dateAccountCreatedAfterCutoff = new DateTime(2017, 09, 23, 01, 00, 00, DateTimeKind.Local);
 
-            _newDeclarationsPassedAccountCreatedDateTests = _processor
-                .ProcessDeclarationEntryTypes(declarationsWithPassedAccountCreatedDate, dateAccountCreatedAfterCutoff);
+            _declarationsAfterAccountCreatedDatePostProcessed = _processor
+                .ProcessDeclarationPaymentStatuses(declarationsWithPassedAccountCreatedDate, dateAccountCreatedAfterCutoff);
 
             var dateAccountCreatedStartOfYear = new DateTime(2017, 01, 01, 00, 00, 00, DateTimeKind.Local);
 
-            _newDeclarationsAccountCreatedAtStartOfYearTests = GetDeclarationList();
+            var declarationsAccountCreatedAtStartOfYear = GetDeclarationList();
 
-            _newDeclarationsAccountCreatedAtStartOfYearTests = _processor
-                .ProcessDeclarationEntryTypes(_newDeclarationsAccountCreatedAtStartOfYearTests,
+            _declarationsAccountCreatedAtStartOfYearPostProcessed = _processor
+                .ProcessDeclarationPaymentStatuses(declarationsAccountCreatedAtStartOfYear,
                     dateAccountCreatedStartOfYear);
 
         }
@@ -95,44 +94,44 @@ namespace HMRC.ESFA.Levy.Api.UnitTests
         }
 
         [Test]
-        public void ShouldReturnEmtpyListIfPassedEmptyList()
+        public void ShouldReturnEmptyListIfPassedEmptyList()
         {
-            Assert.AreEqual(_emptyDeclarationResult.Count, 0);
+            Assert.AreEqual(_emptyDeclarationPostProcessed.Count, 0);
         }
 
         [Test]
-        public void ShouldSetLateEntry1ToLate()
+        public void ShouldSetLate1PaymentStatusToLate()
         {
-            var expectedLateEntry = _newDeclarationsStandardTests.First(x => x.Id == "Late1");
+            var expectedLateEntry = _declarationsPostProcessed.First(x => x.Id == "Late1");
             Assert.AreEqual(expectedLateEntry.LevyDeclarationPaymentStatus, LevyDeclarationPaymentStatus.LatePayment);
         }
 
         [Test]
-        public void ShouldSetLateEntry2ToLate()
+        public void ShouldSetLate2PaymentStatusToLate()
         {
-            var expectedLateEntry = _newDeclarationsStandardTests.First(x => x.Id == "Late2");
+            var expectedLateEntry = _declarationsPostProcessed.First(x => x.Id == "Late2");
             Assert.AreEqual(expectedLateEntry.LevyDeclarationPaymentStatus, LevyDeclarationPaymentStatus.LatePayment);
         }
 
         [Test]
-        public void ShouldSetUnprocessedAndEarly()
+        public void ShouldSetUnprocessedAndEarlyToUnprocessed()
         {
-            var expectedLateEntry = _newDeclarationsStandardTests.First(x => x.Id == "unprocessedAndVeryEarly");
+            var expectedLateEntry = _declarationsPostProcessed.First(x => x.Id == "unprocessedAndVeryEarly");
             Assert.AreEqual(expectedLateEntry.LevyDeclarationPaymentStatus,
                 LevyDeclarationPaymentStatus.UnprocessedPayment);
         }
 
         [Test]
-        public void ShouldSetLastCutoffToLastBeforeCutoff()
+        public void ShouldSetLastCutoffToLastBeforeCutoffToLatestPayment()
         {
-            var expectedLateEntry = _newDeclarationsStandardTests.First(x => x.Id == "LastBeforeCutoff");
+            var expectedLateEntry = _declarationsPostProcessed.First(x => x.Id == "LastBeforeCutoff");
             Assert.AreEqual(expectedLateEntry.LevyDeclarationPaymentStatus, LevyDeclarationPaymentStatus.LatestPayment);
         }
 
         [Test]
-        public void ShouldSetSecondLastCutoffToStandard()
+        public void ShouldSetSecondLastCutoffToUnprocessed()
         {
-            var expectedLateEntry = _newDeclarationsStandardTests.First(x => x.Id == "secondLastBeforeCutoff");
+            var expectedLateEntry = _declarationsPostProcessed.First(x => x.Id == "secondLastBeforeCutoff");
             Assert.AreEqual(expectedLateEntry.LevyDeclarationPaymentStatus,
                 LevyDeclarationPaymentStatus.UnprocessedPayment);
         }
@@ -141,7 +140,7 @@ namespace HMRC.ESFA.Levy.Api.UnitTests
         [Test]
         public void ShouldSetDeclarationBeforeDateAddedToUnprocessed()
         {
-            var expectedLateEntry = _newDeclarationsStandardTests.First(x => x.Id == "early");
+            var expectedLateEntry = _declarationsPostProcessed.First(x => x.Id == "early");
             Assert.AreEqual(expectedLateEntry.LevyDeclarationPaymentStatus,
                 LevyDeclarationPaymentStatus.UnprocessedPayment);
         }
@@ -150,7 +149,7 @@ namespace HMRC.ESFA.Levy.Api.UnitTests
         [Test]
         public void ShouldSetLateEntry1WithPassedAccountDateAddedToUnprocessed()
         {
-            var expectedLateEntry = _newDeclarationsPassedAccountCreatedDateTests.First(x => x.Id == "Late1");
+            var expectedLateEntry = _declarationsAfterAccountCreatedDatePostProcessed.First(x => x.Id == "Late1");
             Assert.AreEqual(expectedLateEntry.LevyDeclarationPaymentStatus,
                 LevyDeclarationPaymentStatus.UnprocessedPayment);
         }
@@ -159,7 +158,7 @@ namespace HMRC.ESFA.Levy.Api.UnitTests
         [Test]
         public void ShouldSetLateEntry2WithPassedAccountDateAddedToUnprocessed()
         {
-            var expectedLateEntry = _newDeclarationsPassedAccountCreatedDateTests.First(x => x.Id == "Late2");
+            var expectedLateEntry = _declarationsAfterAccountCreatedDatePostProcessed.First(x => x.Id == "Late2");
             Assert.AreEqual(expectedLateEntry.LevyDeclarationPaymentStatus,
                 LevyDeclarationPaymentStatus.UnprocessedPayment);
         }
@@ -168,7 +167,7 @@ namespace HMRC.ESFA.Levy.Api.UnitTests
         public void ShouldSetUnprocessedAndEarlywithPassedAccountDateAddedToUnprocessed()
         {
             var expectedLateEntry =
-                _newDeclarationsPassedAccountCreatedDateTests.First(x => x.Id == "unprocessedAndVeryEarly");
+                _declarationsAfterAccountCreatedDatePostProcessed.First(x => x.Id == "unprocessedAndVeryEarly");
             Assert.AreEqual(expectedLateEntry.LevyDeclarationPaymentStatus,
                 LevyDeclarationPaymentStatus.UnprocessedPayment);
         }
@@ -177,7 +176,7 @@ namespace HMRC.ESFA.Levy.Api.UnitTests
         public void ShouldSetLastCutoffwithPassedAccountDateAddedToUnprocessed()
         {
             var expectedLateEntry =
-                _newDeclarationsPassedAccountCreatedDateTests.First(x => x.Id == "LastBeforeCutoff");
+                _declarationsAfterAccountCreatedDatePostProcessed.First(x => x.Id == "LastBeforeCutoff");
             Assert.AreEqual(expectedLateEntry.LevyDeclarationPaymentStatus,
                 LevyDeclarationPaymentStatus.UnprocessedPayment);
         }
@@ -186,7 +185,7 @@ namespace HMRC.ESFA.Levy.Api.UnitTests
         public void ShouldSetSecondLastCutoffwithPassedAccountDateAddedToUnprocessed()
         {
             var expectedLateEntry =
-                _newDeclarationsPassedAccountCreatedDateTests.First(x => x.Id == "secondLastBeforeCutoff");
+                _declarationsAfterAccountCreatedDatePostProcessed.First(x => x.Id == "secondLastBeforeCutoff");
             Assert.AreEqual(expectedLateEntry.LevyDeclarationPaymentStatus,
                 LevyDeclarationPaymentStatus.UnprocessedPayment);
         }
@@ -195,15 +194,15 @@ namespace HMRC.ESFA.Levy.Api.UnitTests
         [Test]
         public void ShouldSetDeclarationBeforeDateAddedwithPassedAccountDateAddedToUnprocessed()
         {
-            var expectedLateEntry = _newDeclarationsPassedAccountCreatedDateTests.First(x => x.Id == "early");
+            var expectedLateEntry = _declarationsAfterAccountCreatedDatePostProcessed.First(x => x.Id == "early");
             Assert.AreEqual(expectedLateEntry.LevyDeclarationPaymentStatus,
                 LevyDeclarationPaymentStatus.UnprocessedPayment);
         }
 
         [Test]
-        public void ShouldSetDeclarationBeforeDateAddedToUnprocessedOnAccountOpenAtYearStart()
+        public void ShouldSetSingleDeclarationInPeriodBeforeDateAddedToLatestOnAccountOpenAtYearStart()
         {
-            var expectedLateEntry = _newDeclarationsAccountCreatedAtStartOfYearTests.First(x => x.Id == "early");
+            var expectedLateEntry = _declarationsAccountCreatedAtStartOfYearPostProcessed.First(x => x.Id == "early");
             Assert.AreEqual(expectedLateEntry.LevyDeclarationPaymentStatus, LevyDeclarationPaymentStatus.LatestPayment);
         }
 
@@ -223,8 +222,8 @@ namespace HMRC.ESFA.Levy.Api.UnitTests
         };
             var dateAccountCreated = new DateTime(2017, 01, 01, 00, 00, 00, DateTimeKind.Local);
 
-            var processor = new DeclarationTypeProcessor();
-            Assert.Throws<FormatException>(() => processor.ProcessDeclarationEntryTypes(brokenDeclarationList, dateAccountCreated));
+            var processor = new PaymentStatusProcessor();
+            Assert.Throws<FormatException>(() => processor.ProcessDeclarationPaymentStatuses(brokenDeclarationList, dateAccountCreated));
     }
 }
 }

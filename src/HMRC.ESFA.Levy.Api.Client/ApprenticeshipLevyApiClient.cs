@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Specialized;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -17,18 +16,18 @@ namespace HMRC.ESFA.Levy.Api.Client
     public class ApprenticeshipLevyApiClient : IApprenticeshipLevyApiClient
     {
         private readonly HttpClient _client;
-        private readonly IDeclarationTypeProcessor _declarationTypeProcessor;
+        private readonly IPaymentStatusProcessor _paymentStatusProcessor;
         private const string DateFormat = "yyyy-MM-dd";
 
         /// <summary>
         /// Default constuctor
         /// </summary>
         /// <param name="client">A configured HttpClient, alternatively use ApprenticeshipLevyApiClient.CreateHttpClient(token, url)</param>
-        /// <param name="declarationTypeProcessor"></param>
-        public ApprenticeshipLevyApiClient(HttpClient client, IDeclarationTypeProcessor declarationTypeProcessor)
+        /// <param name="paymentStatusProcessor"></param>
+        public ApprenticeshipLevyApiClient(HttpClient client, IPaymentStatusProcessor paymentStatusProcessor)
         {
             _client = client;
-            _declarationTypeProcessor = declarationTypeProcessor;
+            _paymentStatusProcessor = paymentStatusProcessor;
         }
 
         /// <summary>
@@ -84,7 +83,7 @@ namespace HMRC.ESFA.Levy.Api.Client
             return await _client.Get<LevyDeclarations>(url);
         }
 
-        public async Task<LevyDeclarations> GetEmployerLevyDeclarationsWithPaymentStatus(string empRef, DateTime dateRegistered)
+        public async Task<LevyDeclarations> GetEmployerLevyDeclarationsWithPaymentStatuses(string empRef, DateTime dateRegistered)
         {
             var url = $"apprenticeship-levy/epaye/{HttpUtility.UrlEncode(empRef)}/declarations";
             var parameters = HttpUtility.ParseQueryString(string.Empty);
@@ -95,7 +94,7 @@ namespace HMRC.ESFA.Levy.Api.Client
             }
 
             var levyDeclarations = await _client.Get<LevyDeclarations>(url);
-            levyDeclarations.Declarations = _declarationTypeProcessor.ProcessDeclarationEntryTypes(levyDeclarations.Declarations, dateRegistered);
+            levyDeclarations.Declarations = _paymentStatusProcessor.ProcessDeclarationPaymentStatuses(levyDeclarations.Declarations, dateRegistered);
             return levyDeclarations;
         }
 

@@ -5,10 +5,10 @@ using HMRC.ESFA.Levy.Api.Types;
 
 namespace HMRC.ESFA.Levy.Api.Client.Services
 {
-    public class DeclarationTypeProcessor : IDeclarationTypeProcessor
+    public class PaymentStatusProcessor : IPaymentStatusProcessor
     {
 
-        public List<Declaration> ProcessDeclarationEntryTypes(List<Declaration> declarations, DateTime dateAdded)
+        public List<Declaration> ProcessDeclarationPaymentStatuses(List<Declaration> declarations, DateTime dateAdded)
         {
             var distinctPeriodsInPayroll = declarations
                 .Select(x => x.PayrollPeriod.Year + x.PayrollPeriod.Month.ToString())
