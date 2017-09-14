@@ -57,37 +57,37 @@ namespace HMRC.ESFA.Levy.Api.UnitTests
                 new Declaration
                 {
                     Id = "Late2",
-                    SubmissionTime = new DateTime(2017, 12, 20, 00, 00, 00, DateTimeKind.Local),
+                    SubmissionTime = new DateTime(2017, 12, 20, 00, 00, 00, DateTimeKind.Utc),
                     PayrollPeriod = new PayrollPeriod {Month = 5, Year = PayrollYear},
                 },
                 new Declaration
                 {
                     Id = "unprocessedAndVeryEarly",
-                    SubmissionTime = new DateTime(2017, 1, 20, 00, 00, 00, DateTimeKind.Local),
+                    SubmissionTime = new DateTime(2017, 1, 20, 00, 00, 00, DateTimeKind.Utc),
                     PayrollPeriod = new PayrollPeriod {Month = 5, Year = PayrollYear},
                 },
                 new Declaration
                 {
                     Id = "LastBeforeCutoff",
-                    SubmissionTime = new DateTime(2017, 09, 20, 0, 59, 59, DateTimeKind.Local),
+                    SubmissionTime = new DateTime(2017, 09, 19, 23, 59, 59, DateTimeKind.Utc),
                     PayrollPeriod = new PayrollPeriod {Month = 5, Year = PayrollYear}
                 },
                 new Declaration
                 {
                     Id = "secondLastBeforeCutoff",
-                    SubmissionTime = new DateTime(2017, 09, 19, 10, 15, 00, DateTimeKind.Local),
+                    SubmissionTime = new DateTime(2017, 09, 19, 10, 15, 00, DateTimeKind.Utc),
                     PayrollPeriod = new PayrollPeriod {Month = 5, Year = PayrollYear},
                 },
                 new Declaration
                 {
                     Id = "Late1",
-                    SubmissionTime = new DateTime(2017, 09, 20, 1, 0, 0, DateTimeKind.Local),
+                    SubmissionTime = new DateTime(2017, 09, 20, 0, 0, 0, DateTimeKind.Utc),
                     PayrollPeriod = new PayrollPeriod {Month = 5, Year = PayrollYear},
                 },
                 new Declaration
                 {
                     Id = "early",
-                    SubmissionTime = new DateTime(2017, 8, 19, 00, 00, 00, DateTimeKind.Local),
+                    SubmissionTime = new DateTime(2017, 8, 19, 00, 00, 00, DateTimeKind.Utc),
                     PayrollPeriod = new PayrollPeriod {Month = 4, Year = PayrollYear},
                 },
             };
