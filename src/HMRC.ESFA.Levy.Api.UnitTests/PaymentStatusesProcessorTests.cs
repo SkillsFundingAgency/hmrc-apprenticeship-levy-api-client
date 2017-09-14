@@ -57,7 +57,7 @@ namespace HMRC.ESFA.Levy.Api.UnitTests
                 new Declaration
                 {
                     Id = "Late2",
-                    SubmissionTime = new DateTime(2017, 12, 20, 00, 00, 00, DateTimeKind.Utc),
+                    SubmissionTime = new DateTime(2017, 12, 21, 00, 00, 00, DateTimeKind.Utc),
                     PayrollPeriod = new PayrollPeriod {Month = 5, Year = PayrollYear},
                 },
                 new Declaration
