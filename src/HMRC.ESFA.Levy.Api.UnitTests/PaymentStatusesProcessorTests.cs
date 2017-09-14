@@ -29,18 +29,18 @@ namespace HMRC.ESFA.Levy.Api.UnitTests
 
             var declarationsWithPassedAccountCreatedDate = GetDeclarationList();
 
-            var dateAccountCreated = new DateTime(2017, 9, 23, 00, 59, 59, DateTimeKind.Local);
+            var dateAccountCreated = new DateTime(2017, 9, 22, 23, 59, 59, DateTimeKind.Utc);
 
             _declarationsPostProcessed = _processor.ProcessDeclarationPaymentStatuses(declarations, dateAccountCreated);
 
             _emptyDeclarationPostProcessed = _processor.ProcessDeclarationPaymentStatuses(_emptyDeclarationsPreprocessed, new DateTime());
 
-            var dateAccountCreatedAfterCutoff = new DateTime(2017, 09, 23, 01, 00, 00, DateTimeKind.Local);
+            var dateAccountCreatedAfterCutoff = new DateTime(2017, 09, 23, 00, 00, 00, DateTimeKind.Utc);
 
             _declarationsAfterAccountCreatedDatePostProcessed = _processor
                 .ProcessDeclarationPaymentStatuses(declarationsWithPassedAccountCreatedDate, dateAccountCreatedAfterCutoff);
 
-            var dateAccountCreatedStartOfYear = new DateTime(2017, 01, 01, 00, 00, 00, DateTimeKind.Local);
+            var dateAccountCreatedStartOfYear = new DateTime(2017, 01, 01, 00, 00, 00, DateTimeKind.Utc);
 
             var declarationsAccountCreatedAtStartOfYear = GetDeclarationList();
 
@@ -57,7 +57,7 @@ namespace HMRC.ESFA.Levy.Api.UnitTests
                 new Declaration
                 {
                     Id = "Late2",
-                    SubmissionTime = new DateTime(2017, 12, 21, 00, 00, 00, DateTimeKind.Utc),
+                    SubmissionTime = new DateTime(2017, 12, 20, 00, 00, 00, DateTimeKind.Utc),
                     PayrollPeriod = new PayrollPeriod {Month = 5, Year = PayrollYear},
                 },
                 new Declaration
@@ -220,7 +220,7 @@ namespace HMRC.ESFA.Levy.Api.UnitTests
                 PayrollPeriod = new PayrollPeriod {Month = 5, Year = "brokenFormat"}
             }
         };
-            var dateAccountCreated = new DateTime(2017, 01, 01, 00, 00, 00, DateTimeKind.Local);
+            var dateAccountCreated = new DateTime(2017, 01, 01, 00, 00, 00, DateTimeKind.Utc);
 
             var processor = new PaymentStatusProcessor();
             Assert.Throws<FormatException>(() => processor.ProcessDeclarationPaymentStatuses(brokenDeclarationList, dateAccountCreated));
