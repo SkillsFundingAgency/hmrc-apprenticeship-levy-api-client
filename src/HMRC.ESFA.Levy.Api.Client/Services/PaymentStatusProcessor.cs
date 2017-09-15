@@ -43,8 +43,9 @@ namespace HMRC.ESFA.Levy.Api.Client.Services
 
         private static DateTime DateOfCutoffUtc(PayrollPeriod payrollPeriod, int dateOfCutoff)
         {
+            const int monthModifierToAlignWithCalendarMonths = 4;
             var yearRange = payrollPeriod.Year;
-            var monthOfProcessing = payrollPeriod.Month + 4;
+            var monthOfProcessing = payrollPeriod.Month + monthModifierToAlignWithCalendarMonths;
             var yearOfProcessing = 2000 + int.Parse(yearRange.Substring(0, 2));
             if (monthOfProcessing > 12)
             {
