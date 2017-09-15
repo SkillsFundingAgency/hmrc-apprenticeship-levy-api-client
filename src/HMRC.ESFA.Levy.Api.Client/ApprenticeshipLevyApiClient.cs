@@ -86,12 +86,6 @@ namespace HMRC.ESFA.Levy.Api.Client
         public async Task<LevyDeclarations> GetEmployerLevyDeclarationsWithPaymentStatuses(string empRef, DateTime dateRegistered)
         {
             var url = $"apprenticeship-levy/epaye/{HttpUtility.UrlEncode(empRef)}/declarations";
-            var parameters = HttpUtility.ParseQueryString(string.Empty);
-
-            if (parameters.AllKeys.Any())
-            {
-                url += "?" + parameters;
-            }
 
             var levyDeclarations = await _client.Get<LevyDeclarations>(url);
             levyDeclarations.Declarations = _paymentStatusProcessor.ProcessDeclarationPaymentStatuses(levyDeclarations.Declarations, dateRegistered);

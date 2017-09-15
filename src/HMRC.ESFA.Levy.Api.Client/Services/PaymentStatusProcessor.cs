@@ -7,25 +7,26 @@ namespace HMRC.ESFA.Levy.Api.Client.Services
 {
     public class PaymentStatusProcessor : IPaymentStatusProcessor
     {
+        private const int DayInMonthForSubmissionProcessing = 23;
+        private const int DayInMonthForSubmissionCutoff = 20;
 
         public List<Declaration> ProcessDeclarationPaymentStatuses(List<Declaration> declarations, DateTime dateAdded)
         {
             var distinctPeriodsInPayroll = declarations
-                .Select(x => x.PayrollPeriod.Year + x.PayrollPeriod.Month.ToString())
+                .Select(x => $@"{x.PayrollPeriod.Year}{x.PayrollPeriod.Month}")
                 .Distinct();
 
             foreach (var period in distinctPeriodsInPayroll)
             {
                 foreach (var declaration in declarations
-                    .Where(x => x.PayrollPeriod.Year + x.PayrollPeriod.Month.ToString() == period)
+                    .Where(x => $@"{x.PayrollPeriod.Year}{x.PayrollPeriod.Month}" == period)
                     .OrderByDescending(x => x.SubmissionTime))
                 {
-
-                    var dateOfCutoffForProcessing = DateOfCutoffUtc(declaration.PayrollPeriod, 23);
+                    var dateOfCutoffForProcessing = DateOfCutoffUtc(declaration.PayrollPeriod, DayInMonthForSubmissionProcessing);
             
                     if (dateAdded.ToUniversalTime() >= dateOfCutoffForProcessing) break;
 
-                    var dateOfCutoffForSubmission = DateOfCutoffUtc(declaration.PayrollPeriod, 20);
+                    var dateOfCutoffForSubmission = DateOfCutoffUtc(declaration.PayrollPeriod, DayInMonthForSubmissionCutoff);
 
                     if (declaration.SubmissionTime.ToUniversalTime() >= dateOfCutoffForSubmission)
                         declaration.LevyDeclarationPaymentStatus = LevyDeclarationPaymentStatus.LatePayment;
@@ -42,12 +43,13 @@ namespace HMRC.ESFA.Levy.Api.Client.Services
 
         private static DateTime DateOfCutoffUtc(PayrollPeriod payrollPeriod, int dateOfCutoff)
         {
+            var yearRange = payrollPeriod.Year;
             var monthOfProcessing = payrollPeriod.Month + 4;
-            var yearOfProcessing = 2000 + int.Parse(payrollPeriod.Year.Substring(0, 2));
+            var yearOfProcessing = 2000 + int.Parse(yearRange.Substring(0, 2));
             if (monthOfProcessing > 12)
             {
                 monthOfProcessing = monthOfProcessing - 12;
-                yearOfProcessing = yearOfProcessing + 1;
+                yearOfProcessing++;
             }
 
             return new DateTime(yearOfProcessing, monthOfProcessing, dateOfCutoff, 00, 00, 00, DateTimeKind.Utc);
