@@ -29,7 +29,9 @@ namespace HMRC.ESFA.Levy.Api.Client.Services
                     var dateOfCutoffForSubmission = DateOfCutoffUtc(declaration.PayrollPeriod, DayInMonthForSubmissionCutoff);
 
                     if (declaration.SubmissionTime.ToUniversalTime() >= dateOfCutoffForSubmission)
+                    {
                         declaration.LevyDeclarationPaymentStatus = LevyDeclarationPaymentStatus.LatePayment;
+                    }
                     else
                     {
                         declaration.LevyDeclarationPaymentStatus = LevyDeclarationPaymentStatus.LatestPayment;
