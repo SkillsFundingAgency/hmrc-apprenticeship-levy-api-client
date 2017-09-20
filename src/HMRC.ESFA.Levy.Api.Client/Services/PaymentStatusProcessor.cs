@@ -12,13 +12,15 @@ namespace HMRC.ESFA.Levy.Api.Client.Services
 
         public List<Declaration> ProcessDeclarationPaymentStatuses(List<Declaration> declarations, DateTime dateAdded)
         {
-            var distinctPeriodsInPayroll = declarations
+            var declarationsWithPaymentPeriod = declarations.Where(x => x.PayrollPeriod != null).ToList();
+
+            var distinctPeriodsInPayroll = declarationsWithPaymentPeriod
                 .Select(x => $@"{x.PayrollPeriod.Year}{x.PayrollPeriod.Month}")
                 .Distinct();
 
             foreach (var period in distinctPeriodsInPayroll)
             {
-                foreach (var declaration in declarations
+                foreach (var declaration in declarationsWithPaymentPeriod
                     .Where(x => $@"{x.PayrollPeriod.Year}{x.PayrollPeriod.Month}" == period)
                     .OrderByDescending(x => x.SubmissionTime))
                 {

@@ -90,6 +90,11 @@ namespace HMRC.ESFA.Levy.Api.UnitTests
                     SubmissionTime = new DateTime(2017, 8, 19, 00, 00, 00, DateTimeKind.Utc),
                     PayrollPeriod = new PayrollPeriod {Month = 4, Year = PayrollYear},
                 },
+                new Declaration
+                {
+                    Id = "noPayrollPeriod",
+                    SubmissionTime = new DateTime(2017, 8, 19, 00, 00, 00, DateTimeKind.Utc)
+                },
             };
         }
 
@@ -206,6 +211,12 @@ namespace HMRC.ESFA.Levy.Api.UnitTests
             Assert.AreEqual(expectedLateEntry.LevyDeclarationPaymentStatus, LevyDeclarationPaymentStatus.LatestPayment);
         }
 
+        [Test]
+        public void ShouldSetADeclarationWithoutAPaymentPeriodToUnprocessed()
+        {
+            var expectedLateEntry = _declarationsAccountCreatedAtStartOfYearPostProcessed.First(x => x.Id == "noPayrollPeriod");
+            Assert.AreEqual(expectedLateEntry.LevyDeclarationPaymentStatus, LevyDeclarationPaymentStatus.UnprocessedPayment);
+        }
 
         [Test]
         public void ShouldThrowAFormatExceptionIfYearFormatIncorrect()
