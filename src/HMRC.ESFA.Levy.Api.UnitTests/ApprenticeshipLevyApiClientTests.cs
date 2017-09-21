@@ -27,18 +27,18 @@ namespace HMRC.ESFA.Levy.Api.UnitTests
             {
                 new Declaration()
             };
-            LevyDeclarations expected = new LevyDeclarations
+            var expected = new LevyDeclarations
             {
                 EmpRef = "000/AA00000",
                 Declarations = expectedDeclarations
             };
-            MockHttpMessageHandler mockHttp = new MockHttpMessageHandler();
+            var mockHttp = new MockHttpMessageHandler();
             mockHttp.When($"http://localhost/apprenticeship-levy/epaye/{HttpUtility.UrlEncode(expected.EmpRef)}/declarations")
                 .Respond("application/json", JsonConvert.SerializeObject(expected));
 
             var httpClient = mockHttp.ToHttpClient();
             httpClient.BaseAddress = new Uri("http://localhost/");
-            var client = new ApprenticeshipLevyApiClient(httpClient, null);
+            var client = new ApprenticeshipLevyApiClient(httpClient);
 
             // Act
             var declarations = await client.GetEmployerLevyDeclarations(expected.EmpRef);
@@ -64,7 +64,7 @@ namespace HMRC.ESFA.Levy.Api.UnitTests
             var httpClient = mockHttp.ToHttpClient();
             httpClient.BaseAddress = new Uri("http://localhost/");
 
-            var client = new ApprenticeshipLevyApiClient(httpClient, null);
+            var client = new ApprenticeshipLevyApiClient(httpClient);
 
             // Act
             var ex = Assert.ThrowsAsync<ApiHttpException>(() => client.GetEmployerLevyDeclarations(expected.EmpRef));
@@ -73,6 +73,7 @@ namespace HMRC.ESFA.Levy.Api.UnitTests
             mockHttp.VerifyNoOutstandingExpectation();
             Assert.AreEqual(404, ex.HttpCode);
         }
+        
 
         [Test]
         public async Task ShouldGetLevyDeclarationsWithDeclarationTypes()
@@ -105,8 +106,7 @@ namespace HMRC.ESFA.Levy.Api.UnitTests
             // Assert
             mockHttp.VerifyNoOutstandingExpectation();
             Assert.AreEqual(expected.EmpRef, declarations.EmpRef);
-            Assert.AreEqual(expected.Declarations.Count, declarations.Declarations.Count);
+            Assert.AreEqual(expectedDeclarations.Count, declarations.Declarations.Count);
         }
-
     }
 }

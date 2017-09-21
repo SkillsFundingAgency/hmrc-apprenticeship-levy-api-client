@@ -24,11 +24,21 @@ namespace HMRC.ESFA.Levy.Api.Client
         /// </summary>
         /// <param name="client">A configured HttpClient, alternatively use ApprenticeshipLevyApiClient.CreateHttpClient(token, url)</param>
         /// <param name="paymentStatusProcessor"></param>
-        public ApprenticeshipLevyApiClient(HttpClient client, IPaymentStatusProcessor paymentStatusProcessor)
+        public ApprenticeshipLevyApiClient(HttpClient client) : this(client, new PaymentStatusProcessor())
+        {
+        }
+
+        internal ApprenticeshipLevyApiClient(HttpClient client, IPaymentStatusProcessor paymentStatusProcessor)
         {
             _client = client;
             _paymentStatusProcessor = paymentStatusProcessor;
         }
+
+        //internal ApprenticeshipLevyApiClient(HttpClient client, IPaymentStatusProcessor processor)
+        //{
+        //    _client = client;
+        //    _paymentStatusProcessor = new PaymentStatusProcessor();
+        //}
 
         /// <summary>
         /// Returns a list of valid links indexed by empref in HAL format
