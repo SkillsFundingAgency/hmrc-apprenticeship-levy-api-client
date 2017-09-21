@@ -33,8 +33,7 @@ namespace HMRC.ESFA.Levy.Api.Client.Services
             var significantProcessingDates = GetDates(dateAdded, payrollPeriod);
 
             var periodDeclarations = declarations
-                .Where(x => x.PayrollPeriod != null && x.PayrollPeriod.Year == payrollPeriod.Year && x.PayrollPeriod.Month == payrollPeriod.Month)
-                .OrderByDescending(x => x.SubmissionTime);
+                .Where(x => x.PayrollPeriod != null && x.PayrollPeriod.Year == payrollPeriod.Year && x.PayrollPeriod.Month == payrollPeriod.Month);
 
             SetPaymentStatuses(periodDeclarations, significantProcessingDates);
         }
@@ -49,7 +48,7 @@ namespace HMRC.ESFA.Levy.Api.Client.Services
             };
         }
 
-        private static void SetPaymentStatuses(IOrderedEnumerable<Declaration> periodDeclarations, SignificantProcessingDates significantProcessingDates)
+        private static void SetPaymentStatuses(IEnumerable<Declaration> periodDeclarations, SignificantProcessingDates significantProcessingDates)
         {
             if (significantProcessingDates.DateAdded.ToUniversalTime() < significantProcessingDates.DateOfCutoffForProcessing)
             {
@@ -76,8 +75,7 @@ namespace HMRC.ESFA.Levy.Api.Client.Services
 
     public static class IEnumerableDeclarationExtensions
     {
-        public static IOrderedEnumerable<Declaration> SetLateDeclarations(this IOrderedEnumerable<Declaration> list,
-            DateTime dateOfCutoffForSubmission)
+        public static IEnumerable<Declaration> SetLateDeclarations(this IEnumerable<Declaration> list, DateTime dateOfCutoffForSubmission)
         {
             foreach (var declaration in list)
             {
@@ -90,10 +88,11 @@ namespace HMRC.ESFA.Levy.Api.Client.Services
             return list;
         }
 
-        public static IOrderedEnumerable<Declaration> SetLatestDeclaration(this IOrderedEnumerable<Declaration> periodDeclarations, DateTime dateOfCutoffForSubmission)
+        public static IEnumerable<Declaration> SetLatestDeclaration(this IEnumerable<Declaration> periodDeclarations, DateTime dateOfCutoffForSubmission)
         {
             var latestDeclaration =
                 periodDeclarations
+                    .OrderByDescending(x => x.SubmissionTime)
                     .First(
                     declaration => declaration.SubmissionTime.ToUniversalTime() < dateOfCutoffForSubmission);
 
