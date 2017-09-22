@@ -34,12 +34,6 @@ namespace HMRC.ESFA.Levy.Api.Client
             _paymentStatusProcessor = paymentStatusProcessor;
         }
 
-        //internal ApprenticeshipLevyApiClient(HttpClient client, IPaymentStatusProcessor processor)
-        //{
-        //    _client = client;
-        //    _paymentStatusProcessor = new PaymentStatusProcessor();
-        //}
-
         /// <summary>
         /// Returns a list of valid links indexed by empref in HAL format
         /// </summary>
@@ -98,7 +92,7 @@ namespace HMRC.ESFA.Levy.Api.Client
             var url = $"apprenticeship-levy/epaye/{HttpUtility.UrlEncode(empRef)}/declarations";
 
             var levyDeclarations = await _client.Get<LevyDeclarations>(url);
-            levyDeclarations.Declarations = _paymentStatusProcessor.ProcessDeclarationPaymentStatuses(levyDeclarations.Declarations, dateRegistered);
+            levyDeclarations.Declarations = _paymentStatusProcessor.ProcessDeclarationPaymentStatuses(levyDeclarations.Declarations, dateRegistered, DateTime.Now);
             return levyDeclarations;
         }
 

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
 using HMRC.ESFA.Levy.Api.Types;
 
 namespace HMRC.ESFA.Levy.Api.Client.Services
@@ -10,11 +11,11 @@ namespace HMRC.ESFA.Levy.Api.Client.Services
         private const int DayInMonthForSubmissionCutoff = 20;
         private const int DayInMonthForSubmissionProcessing = 23;
 
-        public List<Declaration> ProcessDeclarationPaymentStatuses(List<Declaration> declarations, DateTime dateAdded)
+        public List<Declaration> ProcessDeclarationPaymentStatuses(List<Declaration> declarations, DateTime dateAdded, DateTime dateTimeProcessingInvoked)
         {
             foreach (var payrollPeriod in FindPayrollPeriods(declarations))
             {
-                SetDeclarationPaymentStatusesByYearMonth(declarations, dateAdded,payrollPeriod);
+                SetDeclarationPaymentStatusesByYearMonth(declarations, dateAdded,payrollPeriod, dateTimeProcessingInvoked);
             }
 
             return declarations;
@@ -25,12 +26,13 @@ namespace HMRC.ESFA.Levy.Api.Client.Services
             return declarations
                 .Where(x => x.PayrollPeriod != null)
                 .Select(x => new PayrollPeriod {Year = x.PayrollPeriod.Year, Month = x.PayrollPeriod.Month})
-                .Distinct();
+                .GroupBy(x => x.Year + x.Month)
+                .Select(payroll => payroll.First());
         }
 
-        private void SetDeclarationPaymentStatusesByYearMonth(IEnumerable<Declaration> declarations, DateTime dateAdded, PayrollPeriod payrollPeriod)
+        private void SetDeclarationPaymentStatusesByYearMonth(IEnumerable<Declaration> declarations, DateTime dateAdded, PayrollPeriod payrollPeriod, DateTime dateTimeProcessingInvoked)
         {
-            var significantProcessingDates = GetDates(dateAdded, payrollPeriod);
+            var significantProcessingDates = GetDates(dateAdded, dateTimeProcessingInvoked, payrollPeriod);
 
             var periodDeclarations = declarations
                 .Where(x => x.PayrollPeriod != null && x.PayrollPeriod.Year == payrollPeriod.Year && x.PayrollPeriod.Month == payrollPeriod.Month);
@@ -38,11 +40,12 @@ namespace HMRC.ESFA.Levy.Api.Client.Services
             SetPaymentStatuses(periodDeclarations, significantProcessingDates);
         }
 
-        private SignificantProcessingDates GetDates(DateTime dateAdded, PayrollPeriod payrollPeriod)
+        private SignificantProcessingDates GetDates(DateTime dateAdded, DateTime dateTimeProcessingInvoked, PayrollPeriod payrollPeriod)
         {
             return new SignificantProcessingDates
             {
                 DateAdded = dateAdded,
+                DateProcessorCalled = dateTimeProcessingInvoked,
                 DateOfCutoffForProcessing = GetDateOfCutoffInUtc(payrollPeriod, DayInMonthForSubmissionProcessing),
                 dateOfCutoffForSubmission = GetDateOfCutoffInUtc(payrollPeriod, DayInMonthForSubmissionCutoff)
             };
@@ -50,7 +53,9 @@ namespace HMRC.ESFA.Levy.Api.Client.Services
 
         private static void SetPaymentStatuses(IEnumerable<Declaration> periodDeclarations, SignificantProcessingDates significantProcessingDates)
         {
-            if (significantProcessingDates.DateAdded.ToUniversalTime() < significantProcessingDates.DateOfCutoffForProcessing)
+            if (significantProcessingDates.DateAdded.ToUniversalTime() < significantProcessingDates.DateOfCutoffForProcessing &&
+                significantProcessingDates.DateProcessorCalled.ToUniversalTime() >= significantProcessingDates.DateOfCutoffForProcessing
+                )
             {
                 periodDeclarations
                     .SetLateDeclarations(significantProcessingDates.dateOfCutoffForSubmission)
@@ -108,6 +113,7 @@ namespace HMRC.ESFA.Levy.Api.Client.Services
     public class SignificantProcessingDates
     {
         public DateTime DateAdded { get; set; }
+        public DateTime DateProcessorCalled { get; set; }
         public DateTime DateOfCutoffForProcessing { get; set; }
         public DateTime dateOfCutoffForSubmission { get; set; }
     }

@@ -30,7 +30,7 @@ namespace HMRC.ESFA.Levy.Api.UnitTests
             var dateAccountCreatedAfterCutoff = new DateTime(2017, 09, 23, 00, 00, 00, DateTimeKind.Utc);
 
             _declarationsAfterAccountCreatedDatePostProcessed = _processor
-                .ProcessDeclarationPaymentStatuses(_declarations, dateAccountCreatedAfterCutoff);
+                .ProcessDeclarationPaymentStatuses(_declarations, dateAccountCreatedAfterCutoff, DateTime.Now);
 
             _countOfUnprocessedAfterProcessing =
                 _declarationsAfterAccountCreatedDatePostProcessed.Count(
