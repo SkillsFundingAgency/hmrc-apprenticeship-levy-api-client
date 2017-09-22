@@ -6,7 +6,7 @@ using HMRC.ESFA.Levy.Api.Types;
 
 namespace HMRC.ESFA.Levy.Api.Client.Services
 {
-    public class PaymentStatusProcessor : IPaymentStatusProcessor
+    internal class PaymentStatusProcessor : IPaymentStatusProcessor
     {
         private const int DayInMonthForSubmissionCutoff = 20;
         private const int DayInMonthForSubmissionProcessing = 23;
