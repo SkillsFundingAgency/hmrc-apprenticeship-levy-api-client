@@ -45,22 +45,22 @@ namespace HMRC.ESFA.Levy.Api.Client.Services
             return new SignificantProcessingDates
             {
                 DateAdded = dateAdded,
-                DateProcessorCalled = dateTimeProcessingInvoked,
+                DateProcessorInvoked = dateTimeProcessingInvoked,
                 DateOfCutoffForProcessing = GetDateOfCutoffInUtc(payrollPeriod, DayInMonthForSubmissionProcessing),
-                dateOfCutoffForSubmission = GetDateOfCutoffInUtc(payrollPeriod, DayInMonthForSubmissionCutoff)
+                DateOfCutoffForSubmission = GetDateOfCutoffInUtc(payrollPeriod, DayInMonthForSubmissionCutoff)
             };
         }
 
         private static void SetPaymentStatuses(IEnumerable<Declaration> periodDeclarations, SignificantProcessingDates significantProcessingDates)
         {
             if (significantProcessingDates.DateAdded.ToUniversalTime() < significantProcessingDates.DateOfCutoffForProcessing &&
-                significantProcessingDates.DateProcessorCalled.ToUniversalTime() >= significantProcessingDates.DateOfCutoffForProcessing
+                significantProcessingDates.DateProcessorInvoked.ToUniversalTime() >= significantProcessingDates.DateOfCutoffForProcessing
                 )
-            {
-                periodDeclarations
-                    .SetLateDeclarations(significantProcessingDates.dateOfCutoffForSubmission)
-                    .SetLatestDeclaration(significantProcessingDates.dateOfCutoffForSubmission);
-            }
+                {
+                    periodDeclarations
+                        .SetLateDeclarations(significantProcessingDates.DateOfCutoffForSubmission)
+                        .SetLatestDeclaration(significantProcessingDates.DateOfCutoffForSubmission);
+                }
         }
 
         private static DateTime GetDateOfCutoffInUtc(PayrollPeriod payrollPeriod, int dateOfCutoff)
@@ -110,11 +110,5 @@ namespace HMRC.ESFA.Levy.Api.Client.Services
         }
     }
 
-    public class SignificantProcessingDates
-    {
-        public DateTime DateAdded { get; set; }
-        public DateTime DateProcessorCalled { get; set; }
-        public DateTime DateOfCutoffForProcessing { get; set; }
-        public DateTime dateOfCutoffForSubmission { get; set; }
-    }
+   
 }

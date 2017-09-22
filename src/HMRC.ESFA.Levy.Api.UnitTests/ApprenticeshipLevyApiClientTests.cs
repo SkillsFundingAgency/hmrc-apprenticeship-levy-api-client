@@ -105,6 +105,7 @@ namespace HMRC.ESFA.Levy.Api.UnitTests
 
             // Assert
             mockHttp.VerifyNoOutstandingExpectation();
+            mockHttp.VerifyNoOutstandingRequest();
             Assert.AreEqual(expected.EmpRef, declarations.EmpRef);
             Assert.AreEqual(expectedDeclarations.Count, declarations.Declarations.Count);
         }
