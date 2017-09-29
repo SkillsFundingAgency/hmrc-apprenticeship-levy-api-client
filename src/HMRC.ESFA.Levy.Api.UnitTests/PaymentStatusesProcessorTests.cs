@@ -19,17 +19,15 @@ namespace HMRC.ESFA.Levy.Api.UnitTests
         {
             _processor = new PaymentStatusProcessor();
 
-            var declarations = GetDeclarationList();
-      
-            var dateAccountCreated = new DateTime(2016, 9, 22, 23, 59, 59, DateTimeKind.Utc);
+            var declarations = GetDeclarationList();  
             var dateProcessWasInvoked = new DateTime(2016, 10, 01, 00, 00, 00, DateTimeKind.Utc);
-            _declarationsPostProcessed = _processor.ProcessDeclarationPaymentStatuses(declarations, dateAccountCreated, dateProcessWasInvoked);
+            _declarationsPostProcessed = _processor.ProcessDeclarationPaymentStatuses(declarations, dateProcessWasInvoked);
          }
 
         [Test]
         public void ShouldReturnEmptyListIfPassedEmptyList()
         {
-            var emptyDeclarationPostProcessed = _processor.ProcessDeclarationPaymentStatuses(new List<Declaration>(), DateTime.Now.AddDays(-60), DateTime.Now);
+            var emptyDeclarationPostProcessed = _processor.ProcessDeclarationPaymentStatuses(new List<Declaration>(), DateTime.Now);
             Assert.AreEqual(emptyDeclarationPostProcessed.Count, 0);
         }
 
@@ -45,10 +43,9 @@ namespace HMRC.ESFA.Levy.Api.UnitTests
                     PayrollPeriod = new PayrollPeriod {Month = 5, Year = "brokenFormat"}
                 }
             };
-            var dateAccountCreated = new DateTime(2016, 01, 01, 00, 00, 00, DateTimeKind.Utc);
-
+    
             var processor = new PaymentStatusProcessor();
-            Assert.Throws<FormatException>(() => processor.ProcessDeclarationPaymentStatuses(brokenDeclarationList, dateAccountCreated, DateTime.Now));
+            Assert.Throws<FormatException>(() => processor.ProcessDeclarationPaymentStatuses(brokenDeclarationList, DateTime.Now));
         }
 
         [Test]
@@ -86,26 +83,7 @@ namespace HMRC.ESFA.Levy.Api.UnitTests
             var expectedLateEntry = _declarationsPostProcessed.First(x => x.Id == "secondLastBeforeCutoff");
             Assert.AreEqual(expectedLateEntry.LevyDeclarationPaymentStatus,
                 LevyDeclarationPaymentStatus.UnprocessedPayment);
-        }
-
-
-        [Test]
-        public void ShouldSetLatestDeclarationInPeriodBeforeDateAddedToUnprocessed()
-        {
-            var expectedEntry = _declarationsPostProcessed.First(x => x.Id == "latestAndInPeriodBeforeDateAdded");
-            Assert.AreEqual(expectedEntry.LevyDeclarationPaymentStatus,
-                LevyDeclarationPaymentStatus.UnprocessedPayment);
-        }
-
-        [Test]
-        public void ShouldSetLateDeclarationInPeriodBeforeDateAddedToUnprocessed()
-        {
-            var expectedEntry = _declarationsPostProcessed.First(x => x.Id == "lateAndInPeriodBeforeDateAdded");
-            Assert.AreEqual(expectedEntry.LevyDeclarationPaymentStatus,
-                LevyDeclarationPaymentStatus.UnprocessedPayment,
-                "Unprocessed expected as entry is late for period, but period fell before account date added");
-        }
-
+        } 
 
         [Test]
         public void ShouldSetFutureDeclarationLatestInPeriodAfterDateInvokedToUnprocessed()
@@ -114,15 +92,6 @@ namespace HMRC.ESFA.Levy.Api.UnitTests
             Assert.AreEqual(expectedEntry.LevyDeclarationPaymentStatus,
                 LevyDeclarationPaymentStatus.UnprocessedPayment,
                 "Future payroll entry that is latest (ie in a period not yet run) should be unprocessed");
-        }
-
-        [Test]
-        public void ShouldSetFutureDeclarationLateInPeriodAfterDateInvokedToUnprocessed()
-        {
-            var expectedEntry = _declarationsPostProcessed.First(x => x.Id == "futureEntryLate");
-            Assert.AreEqual(expectedEntry.LevyDeclarationPaymentStatus,
-                LevyDeclarationPaymentStatus.UnprocessedPayment,
-                "Future payroll entry that is late (ie in a period not yet run) should be unprocessed");
         }
 
         private static readonly Declaration NoPayrollPeriod = new Declaration
@@ -165,20 +134,6 @@ namespace HMRC.ESFA.Levy.Api.UnitTests
             PayrollPeriod = new PayrollPeriod { Month = 5, Year = PayrollYear },
         };
 
-        private static readonly Declaration LatestAndInPeriodBeforeDateAdded = new Declaration
-        {
-            Id = "latestAndInPeriodBeforeDateAdded",
-            SubmissionTime = new DateTime(2016, 8, 19, 00, 00, 00, DateTimeKind.Utc),
-            PayrollPeriod = new PayrollPeriod { Month = 4, Year = PayrollYear },
-        };
-
-        private static readonly Declaration LateAndInPeriodBeforeDateAdded = new Declaration
-        {
-            Id = "lateAndInPeriodBeforeDateAdded",
-            SubmissionTime = new DateTime(2016, 8, 21, 00, 00, 00, DateTimeKind.Utc),
-            PayrollPeriod = new PayrollPeriod { Month = 4, Year = PayrollYear },
-        };
-
         private static readonly Declaration FutureEntryLatest = new Declaration
         {
             Id = "futureEntryLatest",
@@ -203,8 +158,6 @@ namespace HMRC.ESFA.Levy.Api.UnitTests
                 LastBeforeCutoff,
                 SecondLastBeforeCutoff,
                 LateEntryFirst,
-                LatestAndInPeriodBeforeDateAdded,
-                LateAndInPeriodBeforeDateAdded,
                 NoPayrollPeriod,
                 FutureEntryLatest,
                 FutureEntryLate

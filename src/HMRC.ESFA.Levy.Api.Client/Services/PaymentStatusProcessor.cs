@@ -11,11 +11,11 @@ namespace HMRC.ESFA.Levy.Api.Client.Services
         private const int DayInMonthForSubmissionCutoff = 20;
         private const int DayInMonthForSubmissionProcessing = 23;
 
-        public List<Declaration> ProcessDeclarationPaymentStatuses(List<Declaration> declarations, DateTime dateAdded, DateTime dateTimeProcessingInvoked)
+        public List<Declaration> ProcessDeclarationPaymentStatuses(List<Declaration> declarations, DateTime dateTimeProcessingInvoked)
         {
             foreach (var payrollPeriod in FindPayrollPeriods(declarations))
             {
-                SetDeclarationPaymentStatusesByYearMonth(declarations, dateAdded,payrollPeriod, dateTimeProcessingInvoked);
+                SetDeclarationPaymentStatusesByYearMonth(declarations, payrollPeriod, dateTimeProcessingInvoked);
             }
 
             return declarations;
@@ -30,9 +30,9 @@ namespace HMRC.ESFA.Levy.Api.Client.Services
                 .Select(payroll => payroll.First());
         }
 
-        private void SetDeclarationPaymentStatusesByYearMonth(IEnumerable<Declaration> declarations, DateTime dateAdded, PayrollPeriod payrollPeriod, DateTime dateTimeProcessingInvoked)
+        private void SetDeclarationPaymentStatusesByYearMonth(IEnumerable<Declaration> declarations, PayrollPeriod payrollPeriod, DateTime dateTimeProcessingInvoked)
         {
-            var significantProcessingDates = GetDates(dateAdded, dateTimeProcessingInvoked, payrollPeriod);
+            var significantProcessingDates = GetDates(dateTimeProcessingInvoked, payrollPeriod);
 
             var periodDeclarations = declarations
                 .Where(x => x.PayrollPeriod != null && x.PayrollPeriod.Year == payrollPeriod.Year && x.PayrollPeriod.Month == payrollPeriod.Month);
@@ -40,11 +40,10 @@ namespace HMRC.ESFA.Levy.Api.Client.Services
             SetPaymentStatuses(periodDeclarations, significantProcessingDates);
         }
 
-        private SignificantProcessingDates GetDates(DateTime dateAdded, DateTime dateTimeProcessingInvoked, PayrollPeriod payrollPeriod)
+        private static SignificantProcessingDates GetDates(DateTime dateTimeProcessingInvoked, PayrollPeriod payrollPeriod)
         {
             return new SignificantProcessingDates
             {
-                DateAdded = dateAdded,
                 DateProcessorInvoked = dateTimeProcessingInvoked,
                 DateOfCutoffForProcessing = GetDateOfCutoffInUtc(payrollPeriod, DayInMonthForSubmissionProcessing),
                 DateOfCutoffForSubmission = GetDateOfCutoffInUtc(payrollPeriod, DayInMonthForSubmissionCutoff)
@@ -53,8 +52,7 @@ namespace HMRC.ESFA.Levy.Api.Client.Services
 
         private static void SetPaymentStatuses(IEnumerable<Declaration> periodDeclarations, SignificantProcessingDates significantProcessingDates)
         {
-            if (significantProcessingDates.DateAdded.ToUniversalTime() < significantProcessingDates.DateOfCutoffForProcessing &&
-                significantProcessingDates.DateProcessorInvoked.ToUniversalTime() >= significantProcessingDates.DateOfCutoffForProcessing
+            if (significantProcessingDates.DateProcessorInvoked.ToUniversalTime() >= significantProcessingDates.DateOfCutoffForProcessing
                 )
                 {
                     periodDeclarations

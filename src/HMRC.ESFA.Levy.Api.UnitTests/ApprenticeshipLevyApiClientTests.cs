@@ -81,6 +81,7 @@ namespace HMRC.ESFA.Levy.Api.UnitTests
             // Arrange
             var expectedDeclarations = new List<Declaration>
             {
+                new Declaration(),
                 new Declaration()
             };
             var expected = new LevyDeclarations
@@ -93,7 +94,7 @@ namespace HMRC.ESFA.Levy.Api.UnitTests
                 .Respond("application/json", JsonConvert.SerializeObject(expected));
 
             var mockDeclarationTypeProcessor = new Mock<IPaymentStatusProcessor>();
-            mockDeclarationTypeProcessor.Setup(x => x.ProcessDeclarationPaymentStatuses(It.IsAny<List<Declaration>>(), It.IsAny<DateTime>(), It.IsAny<DateTime>()))
+            mockDeclarationTypeProcessor.Setup(x => x.ProcessDeclarationPaymentStatuses(It.IsAny<List<Declaration>>(), It.IsAny<DateTime>()))
                 .Returns(expectedDeclarations);
 
             var httpClient = mockHttp.ToHttpClient();
@@ -101,7 +102,7 @@ namespace HMRC.ESFA.Levy.Api.UnitTests
             var client = new ApprenticeshipLevyApiClient(httpClient, mockDeclarationTypeProcessor.Object);
 
             // Act
-            var declarations = await client.GetEmployerLevyDeclarationsWithPaymentStatuses(expected.EmpRef, new DateTime());
+            var declarations = await client.GetEmployerLevyDeclarations(expected.EmpRef);
 
             // Assert
             mockHttp.VerifyNoOutstandingExpectation();

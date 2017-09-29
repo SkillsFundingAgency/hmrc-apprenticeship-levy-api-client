@@ -6,6 +6,6 @@ namespace HMRC.ESFA.Levy.Api.Client.Services
 {
     internal interface IPaymentStatusProcessor
     {
-        List<Declaration> ProcessDeclarationPaymentStatuses(List<Declaration> declarations, DateTime dateAdded, DateTime dateTimeProcessingInvoked);
+        List<Declaration> ProcessDeclarationPaymentStatuses(List<Declaration> declarations, DateTime dateTimeProcessingInvoked);
     }
 }
