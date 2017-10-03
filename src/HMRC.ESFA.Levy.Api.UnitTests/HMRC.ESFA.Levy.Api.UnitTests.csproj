@@ -66,6 +66,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ApprenticeshipLevyApiClientTests.cs" />
+    <Compile Include="CutOffDatesServiceTests.cs" />
     <Compile Include="PaymentStatusesProcessorTests.cs" />
     <Compile Include="PaymentStatusTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
