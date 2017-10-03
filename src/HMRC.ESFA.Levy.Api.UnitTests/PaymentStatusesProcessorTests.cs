@@ -19,16 +19,23 @@ namespace HMRC.ESFA.Levy.Api.UnitTests
         {
             _processor = new PaymentStatusProcessor();
 
-            var declarations = GetDeclarationList();  
+            var declarations = GetDeclarationList();
             var dateProcessWasInvoked = new DateTime(2016, 10, 01, 00, 00, 00, DateTimeKind.Utc);
             _declarationsPostProcessed = _processor.ProcessDeclarationPaymentStatuses(declarations, dateProcessWasInvoked);
-         }
+        }
 
         [Test]
         public void ShouldReturnEmptyListIfPassedEmptyList()
         {
             var emptyDeclarationPostProcessed = _processor.ProcessDeclarationPaymentStatuses(new List<Declaration>(), DateTime.Now);
             Assert.AreEqual(emptyDeclarationPostProcessed.Count, 0);
+        }
+
+        [Test]
+        public void ShouldNotThrowErrorIfNoLatestPaymentFound()
+        {
+            var emptyDeclarationPostProcessed = _processor.ProcessDeclarationPaymentStatuses(new List<Declaration> { LateEntrySecond }, DateTime.Now);
+            Assert.AreEqual(emptyDeclarationPostProcessed.Count, 1);
         }
 
         [Test]
@@ -43,7 +50,7 @@ namespace HMRC.ESFA.Levy.Api.UnitTests
                     PayrollPeriod = new PayrollPeriod {Month = 5, Year = "brokenFormat"}
                 }
             };
-    
+
             var processor = new PaymentStatusProcessor();
             Assert.Throws<FormatException>(() => processor.ProcessDeclarationPaymentStatuses(brokenDeclarationList, DateTime.Now));
         }
@@ -83,7 +90,7 @@ namespace HMRC.ESFA.Levy.Api.UnitTests
             var expectedLateEntry = _declarationsPostProcessed.First(x => x.Id == "secondLastBeforeCutoff");
             Assert.AreEqual(expectedLateEntry.LevyDeclarationPaymentStatus,
                 LevyDeclarationPaymentStatus.UnprocessedPayment);
-        } 
+        }
 
         [Test]
         public void ShouldSetFutureDeclarationLatestInPeriodAfterDateInvokedToUnprocessed()
@@ -111,7 +118,7 @@ namespace HMRC.ESFA.Levy.Api.UnitTests
         {
             Id = "unprocessedAndVeryEarly",
             SubmissionTime = new DateTime(2016, 1, 20, 00, 00, 00, DateTimeKind.Utc),
-            PayrollPeriod = new PayrollPeriod {Month = 5,Year = PayrollYear}
+            PayrollPeriod = new PayrollPeriod { Month = 5, Year = PayrollYear }
         };
 
         private static readonly Declaration LastBeforeCutoff = new Declaration
@@ -125,7 +132,7 @@ namespace HMRC.ESFA.Levy.Api.UnitTests
         {
             Id = "secondLastBeforeCutoff",
             SubmissionTime = new DateTime(2016, 09, 19, 10, 15, 00, DateTimeKind.Utc),
-            PayrollPeriod = new PayrollPeriod { Month = 5,Year = PayrollYear },
+            PayrollPeriod = new PayrollPeriod { Month = 5, Year = PayrollYear },
         };
         private static readonly Declaration LateEntryFirst = new Declaration
         {
