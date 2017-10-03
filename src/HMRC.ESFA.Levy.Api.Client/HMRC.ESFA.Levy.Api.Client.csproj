@@ -55,6 +55,9 @@
     <Compile Include="HttpClientExtensions.cs" />
     <Compile Include="IApprenticeshipLevyApiClient.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Services\CutoffDatesService.cs" />
+    <Compile Include="Services\ICutoffDatesService.cs" />
+    <Compile Include="Services\IEnumerableDeclarationExtensions.cs" />
     <Compile Include="Services\PaymentStatusProcessor.cs" />
     <Compile Include="Services\IPaymentStatusProcessor.cs" />
     <Compile Include="SignificantProcessingDates.cs" />

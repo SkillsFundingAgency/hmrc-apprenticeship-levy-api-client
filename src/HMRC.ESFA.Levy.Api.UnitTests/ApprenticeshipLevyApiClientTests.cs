@@ -94,7 +94,7 @@ namespace HMRC.ESFA.Levy.Api.UnitTests
                 .Respond("application/json", JsonConvert.SerializeObject(expected));
 
             var mockDeclarationTypeProcessor = new Mock<IPaymentStatusProcessor>();
-            mockDeclarationTypeProcessor.Setup(x => x.ProcessDeclarationPaymentStatuses(It.IsAny<List<Declaration>>(), It.IsAny<DateTime>()))
+            mockDeclarationTypeProcessor.Setup(x => x.ProcessDeclarationsByPayrollPeriod(It.IsAny<List<Declaration>>(), It.IsAny<DateTime>()))
                 .Returns(expectedDeclarations);
 
             var httpClient = mockHttp.ToHttpClient();

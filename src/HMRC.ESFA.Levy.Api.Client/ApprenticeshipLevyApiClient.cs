@@ -24,7 +24,7 @@ namespace HMRC.ESFA.Levy.Api.Client
         /// </summary>
         /// <param name="client">A configured HttpClient, alternatively use ApprenticeshipLevyApiClient.CreateHttpClient(token, url)</param>
         /// <param name="paymentStatusProcessor"></param>
-        public ApprenticeshipLevyApiClient(HttpClient client) : this(client, new PaymentStatusProcessor())
+        public ApprenticeshipLevyApiClient(HttpClient client) : this(client, new PaymentStatusProcessor(new CutoffDatesService()))
         {
         }
 
@@ -85,7 +85,7 @@ namespace HMRC.ESFA.Levy.Api.Client
             }
 
             var levyDeclarations = await _client.Get<LevyDeclarations>(url);
-            levyDeclarations.Declarations = _paymentStatusProcessor.ProcessDeclarationPaymentStatuses(levyDeclarations.Declarations, DateTime.Now);
+            levyDeclarations.Declarations = _paymentStatusProcessor.ProcessDeclarationsByPayrollPeriod(levyDeclarations.Declarations, DateTime.Now);
             return levyDeclarations;
         }
 

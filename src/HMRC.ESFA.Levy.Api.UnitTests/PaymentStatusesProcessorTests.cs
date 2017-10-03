@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using HMRC.ESFA.Levy.Api.Client.Services;
 using HMRC.ESFA.Levy.Api.Types;
+using Moq;
 using NUnit.Framework;
 
 namespace HMRC.ESFA.Levy.Api.UnitTests
@@ -13,28 +14,38 @@ namespace HMRC.ESFA.Levy.Api.UnitTests
         private PaymentStatusProcessor _processor;
         private List<Declaration> _declarationsPostProcessed;
         private const string PayrollYear = "16-17";
+        private Mock<ICutoffDatesService> _mockCutoffDatesService;
 
         [SetUp]
         public void Init()
         {
-            _processor = new PaymentStatusProcessor();
-
+            _mockCutoffDatesService = new Mock<ICutoffDatesService>();
+            _mockCutoffDatesService.Setup(x => x.GetDateTimeForProcessingCutoff(It.Is<PayrollPeriod>(data => data.Month == 5 && data.Year == "16-17")))
+                .Returns(new DateTime(2016, 9, 23,0,0,0,DateTimeKind.Utc));
+            _mockCutoffDatesService.Setup(x => x.GetDateTimeForSubmissionCutoff(It.Is<PayrollPeriod>(data => data.Month == 5 && data.Year == "16-17")))
+                .Returns(new DateTime(2016, 9, 20, 0, 0, 0, DateTimeKind.Utc));
+            _mockCutoffDatesService.Setup(x => x.GetDateTimeForProcessingCutoff(It.Is<PayrollPeriod>(data => data.Month == 6 && data.Year == "16-17")))
+                .Returns(new DateTime(2016, 10, 23, 0, 0, 0, DateTimeKind.Utc));
+            _mockCutoffDatesService.Setup(x => x.GetDateTimeForSubmissionCutoff(It.Is<PayrollPeriod>(data => data.Month == 6 && data.Year == "16-17")))
+                .Returns(new DateTime(2016, 10, 20, 0, 0, 0, DateTimeKind.Utc));
+            _processor = new PaymentStatusProcessor(_mockCutoffDatesService.Object);
+       
             var declarations = GetDeclarationList();
             var dateProcessWasInvoked = new DateTime(2016, 10, 01, 00, 00, 00, DateTimeKind.Utc);
-            _declarationsPostProcessed = _processor.ProcessDeclarationPaymentStatuses(declarations, dateProcessWasInvoked);
+            _declarationsPostProcessed = _processor.ProcessDeclarationsByPayrollPeriod(declarations, dateProcessWasInvoked);
         }
 
         [Test]
         public void ShouldReturnEmptyListIfPassedEmptyList()
         {
-            var emptyDeclarationPostProcessed = _processor.ProcessDeclarationPaymentStatuses(new List<Declaration>(), DateTime.Now);
+            var emptyDeclarationPostProcessed = _processor.ProcessDeclarationsByPayrollPeriod(new List<Declaration>(), DateTime.Now);
             Assert.AreEqual(emptyDeclarationPostProcessed.Count, 0);
         }
 
         [Test]
         public void ShouldNotThrowErrorIfNoLatestPaymentFound()
         {
-            var emptyDeclarationPostProcessed = _processor.ProcessDeclarationPaymentStatuses(new List<Declaration> { LateEntrySecond }, DateTime.Now);
+            var emptyDeclarationPostProcessed = _processor.ProcessDeclarationsByPayrollPeriod(new List<Declaration> { LateEntrySecond }, DateTime.Now);
             Assert.AreEqual(emptyDeclarationPostProcessed.Count, 1);
         }
 
@@ -51,8 +62,8 @@ namespace HMRC.ESFA.Levy.Api.UnitTests
                 }
             };
 
-            var processor = new PaymentStatusProcessor();
-            Assert.Throws<FormatException>(() => processor.ProcessDeclarationPaymentStatuses(brokenDeclarationList, DateTime.Now));
+            var processor = new PaymentStatusProcessor(new CutoffDatesService());
+            Assert.Throws<FormatException>(() => processor.ProcessDeclarationsByPayrollPeriod(brokenDeclarationList, DateTime.Now));
         }
 
         [Test]

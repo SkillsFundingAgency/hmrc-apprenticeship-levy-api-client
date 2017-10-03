@@ -15,7 +15,7 @@ namespace HMRC.ESFA.Levy.Api.UnitTests
         [SetUp]
         public void Init()
         {
-            _processor = new PaymentStatusProcessor();
+            _processor = new PaymentStatusProcessor(new CutoffDatesService());
         }
 
         [TestCase(20, 9, 2017)]
@@ -59,7 +59,7 @@ namespace HMRC.ESFA.Levy.Api.UnitTests
                 PayrollPeriod = new PayrollPeriod { Month = GetPayrollMonth(today.Month + 1), Year = GetPayollYear(today) }
             });
 
-            var declarationsPostProcessed = _processor.ProcessDeclarationPaymentStatuses(declarations, today);
+            var declarationsPostProcessed = _processor.ProcessDeclarationsByPayrollPeriod(declarations, today);
             Assert.Multiple(() =>
             {
                 Assert.AreEqual(LevyDeclarationPaymentStatus.LatePayment, declarationsPostProcessed.Single(x => x.Id == "lateentry").LevyDeclarationPaymentStatus, $"Check declaration with id lateentry");

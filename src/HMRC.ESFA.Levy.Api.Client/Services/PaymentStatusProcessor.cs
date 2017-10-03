@@ -1,17 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Cryptography;
 using HMRC.ESFA.Levy.Api.Types;
 
 namespace HMRC.ESFA.Levy.Api.Client.Services
 {
     internal class PaymentStatusProcessor : IPaymentStatusProcessor
     {
-        private const int DayInMonthForSubmissionCutoff = 20;
-        private const int DayInMonthForSubmissionProcessing = 23;
+        private readonly ICutoffDatesService _cutoffDatesService;
 
-        public List<Declaration> ProcessDeclarationPaymentStatuses(List<Declaration> declarations, DateTime dateTimeProcessingInvoked)
+        public PaymentStatusProcessor(ICutoffDatesService cutoffDatesService)
+        {
+            _cutoffDatesService = cutoffDatesService;
+        }
+
+        public List<Declaration> ProcessDeclarationsByPayrollPeriod(List<Declaration> declarations, DateTime dateTimeProcessingInvoked)
         {
             foreach (var payrollPeriod in FindPayrollPeriods(declarations))
             {
@@ -40,13 +43,13 @@ namespace HMRC.ESFA.Levy.Api.Client.Services
             SetPaymentStatuses(periodDeclarations, significantProcessingDates);
         }
 
-        private static SignificantProcessingDates GetDates(DateTime dateTimeProcessingInvoked, PayrollPeriod payrollPeriod)
+        private SignificantProcessingDates GetDates(DateTime dateTimeProcessingInvoked, PayrollPeriod payrollPeriod)
         {
             return new SignificantProcessingDates
             {
                 DateProcessorInvoked = dateTimeProcessingInvoked,
-                DateOfCutoffForProcessing = GetDateOfCutoffInUtc(payrollPeriod, DayInMonthForSubmissionProcessing),
-                DateOfCutoffForSubmission = GetDateOfCutoffInUtc(payrollPeriod, DayInMonthForSubmissionCutoff)
+                DateOfCutoffForProcessing = _cutoffDatesService.GetDateTimeForProcessingCutoff(payrollPeriod),
+                DateOfCutoffForSubmission = _cutoffDatesService.GetDateTimeForSubmissionCutoff(payrollPeriod)
             };
         }
 
@@ -61,52 +64,5 @@ namespace HMRC.ESFA.Levy.Api.Client.Services
                 }
         }
 
-        private static DateTime GetDateOfCutoffInUtc(PayrollPeriod payrollPeriod, int dateOfCutoff)
-        {
-            const int monthModifierToAlignWithCalendarMonths = 4;
-            var monthOfProcessing = payrollPeriod.Month + monthModifierToAlignWithCalendarMonths;
-            var yearOfProcessing = 2000 + int.Parse(payrollPeriod.Year.Substring(0, 2));
-            if (monthOfProcessing > 12)
-            {
-                monthOfProcessing = monthOfProcessing - 12;
-                yearOfProcessing++;
-            }
-
-            return new DateTime(yearOfProcessing, monthOfProcessing, dateOfCutoff, 00, 00, 00, DateTimeKind.Utc);
-        }
     }
-
-    public static class IEnumerableDeclarationExtensions
-    {
-        public static IEnumerable<Declaration> SetLateDeclarations(this IEnumerable<Declaration> list, DateTime dateOfCutoffForSubmission)
-        {
-            foreach (var declaration in list)
-            {
-                if (declaration.SubmissionTime.ToUniversalTime() >= dateOfCutoffForSubmission)
-                {
-                    declaration.LevyDeclarationPaymentStatus = LevyDeclarationPaymentStatus.LatePayment;
-                }
-            }
-
-            return list;
-        }
-
-        public static IEnumerable<Declaration> SetLatestDeclaration(this IEnumerable<Declaration> periodDeclarations, DateTime dateOfCutoffForSubmission)
-        {
-            var latestDeclaration =
-                periodDeclarations
-                    .OrderByDescending(x => x.SubmissionTime)
-                    .First(
-                    declaration => declaration.SubmissionTime.ToUniversalTime() < dateOfCutoffForSubmission);
-
-            if (latestDeclaration != null)
-            {
-                latestDeclaration.LevyDeclarationPaymentStatus = LevyDeclarationPaymentStatus.LatestPayment;
-            }
-
-            return periodDeclarations;
-        }
-    }
-
-   
 }
