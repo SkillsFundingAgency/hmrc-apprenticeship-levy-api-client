@@ -168,7 +168,6 @@ namespace HMRC.ESFA.Levy.Api.UnitTests
 
         private static List<Declaration> GetDeclarationList()
         {
-
             return new List<Declaration>
             {
                 LateEntrySecond,
@@ -179,9 +178,7 @@ namespace HMRC.ESFA.Levy.Api.UnitTests
                 NoPayrollPeriod,
                 FutureEntryLatest,
                 FutureEntryLate
-
             };
         }
     }
 }
-
