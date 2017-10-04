@@ -7,6 +7,7 @@ namespace HMRC.ESFA.Levy.Api.Client.Services
     {
         private const int DayInMonthForSubmissionCutoff = 20;
         private const int DayInMonthForSubmissionProcessing = 23;
+        private const int MonthModifierToAlignWithCalendarMonths = 4;
 
         public DateTime GetDateTimeForSubmissionCutoff(PayrollPeriod payrollPeriod)
         {
@@ -20,8 +21,7 @@ namespace HMRC.ESFA.Levy.Api.Client.Services
 
         private static DateTime GetDateOfCutoffInUtc(PayrollPeriod payrollPeriod, int dateOfCutoff)
         {
-            const int monthModifierToAlignWithCalendarMonths = 4;
-            var monthOfProcessing = payrollPeriod.Month + monthModifierToAlignWithCalendarMonths;
+           var monthOfProcessing = payrollPeriod.Month + MonthModifierToAlignWithCalendarMonths;
             var yearOfProcessing = 2000 + int.Parse(payrollPeriod.Year.Substring(0, 2));
 
             if (monthOfProcessing > 12)

@@ -16,7 +16,7 @@ namespace HMRC.ESFA.Levy.Api.UnitTests
         private const string PayrollYear = "16-17";
         private Mock<ICutoffDatesService> _mockCutoffDatesService;
 
-        [SetUp]
+        [OneTimeSetUp]
         public void Init()
         {
             _mockCutoffDatesService = new Mock<ICutoffDatesService>();
