@@ -112,12 +112,12 @@ namespace HMRC.ESFA.Levy.Api.UnitTests
         }
 
 
-        public short GetPayrollMonth(int month)
+        private short GetPayrollMonth(int month)
         {
             var taxmonth = month - 3;
             return (short)(taxmonth <= 0 ? month + 9 : taxmonth);
         }
-        public string GetPayollYear(DateTime date)
+        private string GetPayollYear(DateTime date)
         {
             return date.Month >= 4 ? $"{date.ToString("yy")}-{(date.AddYears(1)).ToString("yy")}" : $"{(date.AddYears(-1)).ToString("yy")}-{date.ToString("yy")}";
         }
