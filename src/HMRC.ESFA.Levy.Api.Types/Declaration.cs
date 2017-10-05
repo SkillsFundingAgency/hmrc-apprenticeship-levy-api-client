@@ -53,6 +53,6 @@ namespace HMRC.ESFA.Levy.Api.Types
         /// <summary>
         /// Each LevyDeclaration is either standard, LastPaymentBeforeCutoff, or LatePayment (after Cutoff)
         /// </summary>
-        public LevyDeclarationPaymentStatus LevyDeclarationPaymentStatus { get; set; }
+        public LevyDeclarationSubmissionStatus LevyDeclarationSubmissionStatus { get; set; }
     }
 }

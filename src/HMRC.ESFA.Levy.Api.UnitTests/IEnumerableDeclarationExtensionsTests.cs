@@ -17,11 +17,11 @@ namespace HMRC.ESFA.Levy.Api.UnitTests
             declarations.Add(new Declaration
             {
                 SubmissionTime = new DateTime(2017, 5, 20, 00, 00, 00, DateTimeKind.Utc),
-                LevyDeclarationPaymentStatus = LevyDeclarationPaymentStatus.UnprocessedPayment
+                LevyDeclarationSubmissionStatus = LevyDeclarationSubmissionStatus.UnprocessedSubmission
             });
             var result = declarations.SetLateDeclarations(new DateTime(2017, 5, 20));
 
-            Assert.AreEqual(LevyDeclarationPaymentStatus.LatePayment, result.Single().LevyDeclarationPaymentStatus);
+            Assert.AreEqual(LevyDeclarationSubmissionStatus.LateSubmission, result.Single().LevyDeclarationSubmissionStatus);
         }
 
         [Test]
@@ -31,11 +31,11 @@ namespace HMRC.ESFA.Levy.Api.UnitTests
             declarations.Add(new Declaration
             {
                 SubmissionTime = new DateTime(2017, 5, 21, 00, 00, 00, DateTimeKind.Utc),
-                LevyDeclarationPaymentStatus = LevyDeclarationPaymentStatus.UnprocessedPayment
+                LevyDeclarationSubmissionStatus = LevyDeclarationSubmissionStatus.UnprocessedSubmission
             });
             var result = declarations.SetLateDeclarations(new DateTime(2017, 5, 20));
 
-            Assert.AreEqual(LevyDeclarationPaymentStatus.LatePayment, result.Single().LevyDeclarationPaymentStatus);
+            Assert.AreEqual(LevyDeclarationSubmissionStatus.LateSubmission, result.Single().LevyDeclarationSubmissionStatus);
         }
         [Test]
         public void ShouldNotSetLatePaymentIfSubmittedbeforeCutOffDate()
@@ -44,11 +44,11 @@ namespace HMRC.ESFA.Levy.Api.UnitTests
             declarations.Add(new Declaration
             {
                 SubmissionTime = new DateTime(2017, 5, 19, 00, 00, 00, DateTimeKind.Utc),
-                LevyDeclarationPaymentStatus = LevyDeclarationPaymentStatus.UnprocessedPayment
+                LevyDeclarationSubmissionStatus = LevyDeclarationSubmissionStatus.UnprocessedSubmission
             });
             var result = declarations.SetLateDeclarations(new DateTime(2017, 5, 20));
 
-            Assert.AreEqual(LevyDeclarationPaymentStatus.UnprocessedPayment, result.Single().LevyDeclarationPaymentStatus);
+            Assert.AreEqual(LevyDeclarationSubmissionStatus.UnprocessedSubmission, result.Single().LevyDeclarationSubmissionStatus);
         }
 
         [Test]
@@ -58,11 +58,11 @@ namespace HMRC.ESFA.Levy.Api.UnitTests
             declarations.Add(new Declaration
             {
                 SubmissionTime = new DateTime(2017, 5, 19, 00, 00, 00, DateTimeKind.Utc),
-                LevyDeclarationPaymentStatus = LevyDeclarationPaymentStatus.UnprocessedPayment
+                LevyDeclarationSubmissionStatus = LevyDeclarationSubmissionStatus.UnprocessedSubmission
             });
             var result = declarations.SetLatestDeclaration(new DateTime(2017, 5, 20));
 
-            Assert.AreEqual(LevyDeclarationPaymentStatus.LatestPayment, result.Single().LevyDeclarationPaymentStatus);
+            Assert.AreEqual(LevyDeclarationSubmissionStatus.LatestSubmission, result.Single().LevyDeclarationSubmissionStatus);
         }
         [Test]
         public void ShouldNotSetLatestPaymentIfSubmittedAfterCutOffDate()
@@ -71,11 +71,11 @@ namespace HMRC.ESFA.Levy.Api.UnitTests
             declarations.Add(new Declaration
             {
                 SubmissionTime = new DateTime(2017, 5, 21, 00, 00, 00, DateTimeKind.Utc),
-                LevyDeclarationPaymentStatus = LevyDeclarationPaymentStatus.UnprocessedPayment
+                LevyDeclarationSubmissionStatus = LevyDeclarationSubmissionStatus.UnprocessedSubmission
             });
             var result = declarations.SetLatestDeclaration(new DateTime(2017, 5, 20));
 
-            Assert.AreEqual(LevyDeclarationPaymentStatus.UnprocessedPayment, result.Single().LevyDeclarationPaymentStatus);
+            Assert.AreEqual(LevyDeclarationSubmissionStatus.UnprocessedSubmission, result.Single().LevyDeclarationSubmissionStatus);
         }
 
         [Test]
@@ -85,11 +85,11 @@ namespace HMRC.ESFA.Levy.Api.UnitTests
             declarations.Add(new Declaration
             {
                 SubmissionTime = new DateTime(2017, 5, 20, 00, 00, 00, DateTimeKind.Utc),
-                LevyDeclarationPaymentStatus = LevyDeclarationPaymentStatus.UnprocessedPayment
+                LevyDeclarationSubmissionStatus = LevyDeclarationSubmissionStatus.UnprocessedSubmission
             });
             var result = declarations.SetLatestDeclaration(new DateTime(2017, 5, 20));
 
-            Assert.AreEqual(LevyDeclarationPaymentStatus.UnprocessedPayment, result.Single().LevyDeclarationPaymentStatus);
+            Assert.AreEqual(LevyDeclarationSubmissionStatus.UnprocessedSubmission, result.Single().LevyDeclarationSubmissionStatus);
         }
     }
 }

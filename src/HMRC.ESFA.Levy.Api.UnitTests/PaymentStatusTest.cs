@@ -62,11 +62,11 @@ namespace HMRC.ESFA.Levy.Api.UnitTests
             var declarationsPostProcessed = _processor.ProcessDeclarationsByPayrollPeriod(declarations, today);
             Assert.Multiple(() =>
             {
-                Assert.AreEqual(LevyDeclarationPaymentStatus.LatePayment, declarationsPostProcessed.Single(x => x.Id == "lateentry").LevyDeclarationPaymentStatus, $"Check declaration with id lateentry");
-                Assert.AreEqual(LevyDeclarationPaymentStatus.UnprocessedPayment, declarationsPostProcessed.Single(x => x.Id == "latestentry").LevyDeclarationPaymentStatus, $"Check declaration with id latestentry");
-                Assert.AreEqual(LevyDeclarationPaymentStatus.LatestPayment, declarationsPostProcessed.Single(x => x.Id == "anotherlatestentry").LevyDeclarationPaymentStatus, $"Check declaration with id anotherlatestentry");
-                Assert.AreEqual(LevyDeclarationPaymentStatus.UnprocessedPayment, declarationsPostProcessed.Single(x => x.Id == "futurepayrollentry").LevyDeclarationPaymentStatus, $"Check declaration with id futurepayrollentry");
-                Assert.AreEqual(LevyDeclarationPaymentStatus.UnprocessedPayment, declarationsPostProcessed.Single(x => x.Id == "anotherfuturepayrollentry").LevyDeclarationPaymentStatus, $"Check declaration with id anotherfuturepayrollentry");
+                Assert.AreEqual(LevyDeclarationSubmissionStatus.LateSubmission, declarationsPostProcessed.Single(x => x.Id == "lateentry").LevyDeclarationSubmissionStatus, $"Check declaration with id lateentry");
+                Assert.AreEqual(LevyDeclarationSubmissionStatus.UnprocessedSubmission, declarationsPostProcessed.Single(x => x.Id == "latestentry").LevyDeclarationSubmissionStatus, $"Check declaration with id latestentry");
+                Assert.AreEqual(LevyDeclarationSubmissionStatus.LatestSubmission, declarationsPostProcessed.Single(x => x.Id == "anotherlatestentry").LevyDeclarationSubmissionStatus, $"Check declaration with id anotherlatestentry");
+                Assert.AreEqual(LevyDeclarationSubmissionStatus.UnprocessedSubmission, declarationsPostProcessed.Single(x => x.Id == "futurepayrollentry").LevyDeclarationSubmissionStatus, $"Check declaration with id futurepayrollentry");
+                Assert.AreEqual(LevyDeclarationSubmissionStatus.UnprocessedSubmission, declarationsPostProcessed.Single(x => x.Id == "anotherfuturepayrollentry").LevyDeclarationSubmissionStatus, $"Check declaration with id anotherfuturepayrollentry");
             });
         }
 
@@ -104,10 +104,10 @@ namespace HMRC.ESFA.Levy.Api.UnitTests
             var declarationsPostProcessed = _processor.ProcessDeclarationsByPayrollPeriod(declarations, today);
             Assert.Multiple(() =>
             {
-                Assert.AreEqual(LevyDeclarationPaymentStatus.LatestPayment, declarationsPostProcessed.Single(x => x.Id == "month7latestentry").LevyDeclarationPaymentStatus, $"Check declaration with id month7latestentry");
-                Assert.AreEqual(LevyDeclarationPaymentStatus.LatestPayment, declarationsPostProcessed.Single(x => x.Id == "month6latestentry").LevyDeclarationPaymentStatus, $"Check declaration with id month6latestentry");
-                Assert.AreEqual(LevyDeclarationPaymentStatus.LatestPayment, declarationsPostProcessed.Single(x => x.Id == "month8latestentry").LevyDeclarationPaymentStatus, $"Check declaration with id month8latestentry");
-                Assert.AreEqual(LevyDeclarationPaymentStatus.LatestPayment, declarationsPostProcessed.Single(x => x.Id == "month4latestentry").LevyDeclarationPaymentStatus, $"Check declaration with id month4latestentry");
+                Assert.AreEqual(LevyDeclarationSubmissionStatus.LatestSubmission, declarationsPostProcessed.Single(x => x.Id == "month7latestentry").LevyDeclarationSubmissionStatus, $"Check declaration with id month7latestentry");
+                Assert.AreEqual(LevyDeclarationSubmissionStatus.LatestSubmission, declarationsPostProcessed.Single(x => x.Id == "month6latestentry").LevyDeclarationSubmissionStatus, $"Check declaration with id month6latestentry");
+                Assert.AreEqual(LevyDeclarationSubmissionStatus.LatestSubmission, declarationsPostProcessed.Single(x => x.Id == "month8latestentry").LevyDeclarationSubmissionStatus, $"Check declaration with id month8latestentry");
+                Assert.AreEqual(LevyDeclarationSubmissionStatus.LatestSubmission, declarationsPostProcessed.Single(x => x.Id == "month4latestentry").LevyDeclarationSubmissionStatus, $"Check declaration with id month4latestentry");
             });
         }
 

@@ -1,9 +1,9 @@
 ﻿namespace HMRC.ESFA.Levy.Api.Types
 {
-    public enum LevyDeclarationPaymentStatus
+    public enum LevyDeclarationSubmissionStatus
     {
-        UnprocessedPayment = 0,
-        LatePayment = 1,
-        LatestPayment = 2
+        UnprocessedSubmission = 0,
+        LateSubmission = 1,
+        LatestSubmission = 2
     }
 }
