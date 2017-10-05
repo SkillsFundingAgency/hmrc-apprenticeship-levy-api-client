@@ -70,45 +70,45 @@ namespace HMRC.ESFA.Levy.Api.UnitTests
         public void ShouldSetLateEntryFirstPaymentStatusToLate()
         {
             var expectedLateEntry = _declarationsPostProcessed.First(x => x.Id == "LateEntryFirst");
-            Assert.AreEqual(expectedLateEntry.LevyDeclarationPaymentStatus, LevyDeclarationPaymentStatus.LatePayment);
+            Assert.AreEqual(expectedLateEntry.LevyDeclarationSubmissionStatus, LevyDeclarationSubmissionStatus.LateSubmission);
         }
 
         [Test]
         public void ShouldSetLateEntrySecondPaymentStatusToLate()
         {
             var expectedLateEntry = _declarationsPostProcessed.First(x => x.Id == "LateEntrySecond");
-            Assert.AreEqual(expectedLateEntry.LevyDeclarationPaymentStatus, LevyDeclarationPaymentStatus.LatePayment);
+            Assert.AreEqual(expectedLateEntry.LevyDeclarationSubmissionStatus, LevyDeclarationSubmissionStatus.LateSubmission);
         }
 
         [Test]
         public void ShouldSetUnprocessedAndEarlyToUnprocessed()
         {
             var expectedLateEntry = _declarationsPostProcessed.First(x => x.Id == "unprocessedAndVeryEarly");
-            Assert.AreEqual(expectedLateEntry.LevyDeclarationPaymentStatus,
-                LevyDeclarationPaymentStatus.UnprocessedPayment);
+            Assert.AreEqual(expectedLateEntry.LevyDeclarationSubmissionStatus,
+                LevyDeclarationSubmissionStatus.UnprocessedSubmission);
         }
 
         [Test]
         public void ShouldSetLastBeforeCutoffToLatestPayment()
         {
             var expectedLateEntry = _declarationsPostProcessed.First(x => x.Id == "LastBeforeCutoff");
-            Assert.AreEqual(expectedLateEntry.LevyDeclarationPaymentStatus, LevyDeclarationPaymentStatus.LatestPayment);
+            Assert.AreEqual(expectedLateEntry.LevyDeclarationSubmissionStatus, LevyDeclarationSubmissionStatus.LatestSubmission);
         }
 
         [Test]
         public void ShouldSetSecondLastCutoffToUnprocessed()
         {
             var expectedLateEntry = _declarationsPostProcessed.First(x => x.Id == "secondLastBeforeCutoff");
-            Assert.AreEqual(expectedLateEntry.LevyDeclarationPaymentStatus,
-                LevyDeclarationPaymentStatus.UnprocessedPayment);
+            Assert.AreEqual(expectedLateEntry.LevyDeclarationSubmissionStatus,
+                LevyDeclarationSubmissionStatus.UnprocessedSubmission);
         }
 
         [Test]
         public void ShouldSetFutureDeclarationLatestInPeriodAfterDateInvokedToUnprocessed()
         {
             var expectedEntry = _declarationsPostProcessed.First(x => x.Id == "futureEntryLatest");
-            Assert.AreEqual(expectedEntry.LevyDeclarationPaymentStatus,
-                LevyDeclarationPaymentStatus.UnprocessedPayment,
+            Assert.AreEqual(expectedEntry.LevyDeclarationSubmissionStatus,
+                LevyDeclarationSubmissionStatus.UnprocessedSubmission,
                 "Future payroll entry that is latest (ie in a period not yet run) should be unprocessed");
         }
 

@@ -11,7 +11,7 @@ namespace HMRC.ESFA.Levy.Api.Client.Services
         {
             foreach (var declaration in list.Where(declaration => declaration.SubmissionTime.ToUniversalTime() >= dateOfCutoffForSubmission))
             {             
-                    declaration.LevyDeclarationPaymentStatus = LevyDeclarationPaymentStatus.LatePayment;
+                    declaration.LevyDeclarationSubmissionStatus = LevyDeclarationSubmissionStatus.LateSubmission;
             }
 
             return list;
@@ -21,14 +21,14 @@ namespace HMRC.ESFA.Levy.Api.Client.Services
         {
             var latestDeclaration =
                 periodDeclarations
-                .Where(x => x.LevyDeclarationPaymentStatus != LevyDeclarationPaymentStatus.LatePayment)
+                .Where(x => x.LevyDeclarationSubmissionStatus != LevyDeclarationSubmissionStatus.LateSubmission)
                     .OrderByDescending(x => x.SubmissionTime)
                     .FirstOrDefault(
                         declaration => declaration.SubmissionTime.ToUniversalTime() < dateOfCutoffForSubmission);
 
             if (latestDeclaration != null)
             {
-                latestDeclaration.LevyDeclarationPaymentStatus = LevyDeclarationPaymentStatus.LatestPayment;
+                latestDeclaration.LevyDeclarationSubmissionStatus = LevyDeclarationSubmissionStatus.LatestSubmission;
             }
 
             return periodDeclarations;

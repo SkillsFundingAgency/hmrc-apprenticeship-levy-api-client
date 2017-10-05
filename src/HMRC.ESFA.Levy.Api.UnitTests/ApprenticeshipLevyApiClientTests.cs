@@ -115,8 +115,8 @@ namespace HMRC.ESFA.Levy.Api.UnitTests
             mockDeclarationTypeProcessor.VerifyAll();
             mockDeclarationTypeProcessor.VerifyAll();
             Assert.AreEqual(expected.EmpRef, declarations.EmpRef);
-            Assert.AreEqual(LevyDeclarationPaymentStatus.UnprocessedPayment, declarations.Declarations[0].LevyDeclarationPaymentStatus);
-            Assert.AreEqual(LevyDeclarationPaymentStatus.UnprocessedPayment, declarations.Declarations[1].LevyDeclarationPaymentStatus);
+            Assert.AreEqual(LevyDeclarationSubmissionStatus.UnprocessedSubmission, declarations.Declarations[0].LevyDeclarationSubmissionStatus);
+            Assert.AreEqual(LevyDeclarationSubmissionStatus.UnprocessedSubmission, declarations.Declarations[1].LevyDeclarationSubmissionStatus);
             Assert.AreEqual(expectedDeclarations.Count, declarations.Declarations.Count);
         }
     }
