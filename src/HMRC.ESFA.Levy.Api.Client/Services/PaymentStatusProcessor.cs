@@ -35,34 +35,31 @@ namespace HMRC.ESFA.Levy.Api.Client.Services
 
         private void SetDeclarationPaymentStatusesByYearMonth(IEnumerable<Declaration> declarations, PayrollPeriod payrollPeriod, DateTime dateTimeProcessingInvoked)
         {
-            var significantProcessingDates = GetDates(dateTimeProcessingInvoked, payrollPeriod);
+            var significantProcessingDates = GetDates(payrollPeriod);
 
             var periodDeclarations = declarations
                 .Where(x => x.PayrollPeriod != null && x.PayrollPeriod.Year == payrollPeriod.Year && x.PayrollPeriod.Month == payrollPeriod.Month);
 
-            SetPaymentStatuses(periodDeclarations, significantProcessingDates);
+            SetPaymentStatuses(periodDeclarations, significantProcessingDates, dateTimeProcessingInvoked);
         }
 
-        private SignificantProcessingDates GetDates(DateTime dateTimeProcessingInvoked, PayrollPeriod payrollPeriod)
+        private SignificantProcessingDates GetDates(PayrollPeriod payrollPeriod)
         {
             return new SignificantProcessingDates
             {
-                DateProcessorInvoked = dateTimeProcessingInvoked,
                 DateOfCutoffForProcessing = _cutoffDatesService.GetDateTimeForProcessingCutoff(payrollPeriod),
                 DateOfCutoffForSubmission = _cutoffDatesService.GetDateTimeForSubmissionCutoff(payrollPeriod)
             };
         }
 
-        private static void SetPaymentStatuses(IEnumerable<Declaration> periodDeclarations, SignificantProcessingDates significantProcessingDates)
+        private static void SetPaymentStatuses(IEnumerable<Declaration> periodDeclarations, SignificantProcessingDates significantProcessingDates, DateTime dateTimeProcessingInvoked)
         {
-            if (significantProcessingDates.DateProcessorInvoked.ToUniversalTime() >= significantProcessingDates.DateOfCutoffForProcessing
-                )
-                {
-                    periodDeclarations
-                        .SetLateDeclarations(significantProcessingDates.DateOfCutoffForSubmission)
-                        .SetLatestDeclaration(significantProcessingDates.DateOfCutoffForSubmission);
-                }
+            if (dateTimeProcessingInvoked.ToUniversalTime() >= significantProcessingDates.DateOfCutoffForProcessing)
+            {
+                periodDeclarations
+                .SetLateDeclarations(significantProcessingDates.DateOfCutoffForSubmission)
+                .SetLatestDeclaration(significantProcessingDates.DateOfCutoffForSubmission);
+            }
         }
-
     }
 }

@@ -5,13 +5,13 @@ namespace HMRC.ESFA.Levy.Api.Client.Services
 {
     internal class CutoffDatesService : ICutoffDatesService
     {
-        private const int DayInMonthForSubmissionCutoff = 20;
+        private const int LastDayInMonthForSubmission = 19;
         private const int DayInMonthForSubmissionProcessing = 23;
         private const int MonthModifierToAlignWithCalendarMonths = 4;
 
         public DateTime GetDateTimeForSubmissionCutoff(PayrollPeriod payrollPeriod)
         {
-            return GetDateOfCutoffInUtc(payrollPeriod, DayInMonthForSubmissionCutoff);
+            return GetDateOfCutoffInUtc(payrollPeriod, LastDayInMonthForSubmission + 1);
         }
 
         public DateTime GetDateTimeForProcessingCutoff(PayrollPeriod payrollPeriod)
