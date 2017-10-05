@@ -4,6 +4,7 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using System.Web;
+using HMRC.ESFA.Levy.Api.Client.Services;
 using HMRC.ESFA.Levy.Api.Types;
 using HMRC.ESFA.Levy.Api.Types.Exceptions;
 
@@ -15,16 +16,22 @@ namespace HMRC.ESFA.Levy.Api.Client
     public class ApprenticeshipLevyApiClient : IApprenticeshipLevyApiClient
     {
         private readonly HttpClient _client;
-
+        private readonly IPaymentStatusProcessor _paymentStatusProcessor;
         private const string DateFormat = "yyyy-MM-dd";
 
         /// <summary>
         /// Default constuctor
         /// </summary>
         /// <param name="client">A configured HttpClient, alternatively use ApprenticeshipLevyApiClient.CreateHttpClient(token, url)</param>
-        public ApprenticeshipLevyApiClient(HttpClient client)
+        /// <param name="paymentStatusProcessor"></param>
+        public ApprenticeshipLevyApiClient(HttpClient client) : this(client, new PaymentStatusProcessor(new CutoffDatesService()))
+        {
+        }
+
+        internal ApprenticeshipLevyApiClient(HttpClient client, IPaymentStatusProcessor paymentStatusProcessor)
         {
             _client = client;
+            _paymentStatusProcessor = paymentStatusProcessor;
         }
 
         /// <summary>
@@ -77,7 +84,9 @@ namespace HMRC.ESFA.Levy.Api.Client
                 url += "?" + parameters;
             }
 
-            return await _client.Get<LevyDeclarations>(url);
+            var levyDeclarations = await _client.Get<LevyDeclarations>(url);
+            levyDeclarations.Declarations = _paymentStatusProcessor.ProcessDeclarationsByPayrollPeriod(levyDeclarations.Declarations, DateTime.Now);
+            return levyDeclarations;
         }
 
         /// <summary>

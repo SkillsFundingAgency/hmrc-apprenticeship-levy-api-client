@@ -49,6 +49,10 @@ namespace HMRC.ESFA.Levy.Api.Types
         /// The annual amount of apprenticeship levy allowance that has been allocated to this payroll scheme. If absent then the value can be taken as 0. The maximum value in the 2017/18 will be 15,000.
         /// </summary>
         public decimal LevyAllowanceForFullYear { get; set; }
-    }
 
+        /// <summary>
+        /// Each LevyDeclaration is either standard, LastPaymentBeforeCutoff, or LatePayment (after Cutoff)
+        /// </summary>
+        public LevyDeclarationPaymentStatus LevyDeclarationPaymentStatus { get; set; }
+    }
 }
