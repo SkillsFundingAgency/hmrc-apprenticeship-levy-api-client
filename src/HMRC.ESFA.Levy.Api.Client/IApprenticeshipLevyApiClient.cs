@@ -52,7 +52,7 @@ namespace HMRC.ESFA.Levy.Api.Client
         /// <param name="toDate">The date of the latest calculation to return. Defaults to current date.</param>
         /// <exception cref="ApiHttpException"></exception>
         /// <returns></returns>
-        Task<EmploymentStatus> GetEmploymentStatus(string authToken, string empRef, string nino, DateTime? fromDate = null, DateTime? toDate = null)
+        Task<EmploymentStatus> GetEmploymentStatus(string authToken, string empRef, string nino, DateTime? fromDate = null, DateTime? toDate = null);
 
         /// <summary>
         /// Checks the employment status of an individual in a payroll scheme.
