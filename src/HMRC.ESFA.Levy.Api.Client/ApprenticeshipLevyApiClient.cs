@@ -123,6 +123,22 @@ namespace HMRC.ESFA.Levy.Api.Client
         /// <summary>
         /// Checks the employment status of an individual in a payroll scheme.
         /// </summary>
+        /// <param name="authToken">The access token from SFA.DAS.TokenService.Api.Client</param>
+        /// <param name="empRef">A valid employer reference for the PAYE scheme.</param>
+        /// <param name="nino">A valid National Insurance Number (nino) for the individual being checked.</param>
+        /// <param name="fromDate">The date of the earliest calculation to return. Defaults to 72 months prior to current date.</param>
+        /// <param name="toDate">The date of the latest calculation to return. Defaults to current date.</param>
+        /// <exception cref="ApiHttpException"></exception>
+        /// <returns></returns>
+        public async Task<EmploymentStatus> GetEmploymentStatus(string authToken, string empRef, string nino, DateTime? fromDate = null, DateTime? toDate = null)
+        {
+            AddAuthTokenToClient(authToken, _client);
+            return await GetEmploymentStatus(empRef, nino, fromDate, toDate);
+        }
+
+        /// <summary>
+        /// Checks the employment status of an individual in a payroll scheme.
+        /// </summary>
         /// <param name="empRef">A valid employer reference for the PAYE scheme.</param>
         /// <param name="nino">A valid National Insurance Number (nino) for the individual being checked.</param>
         /// <param name="fromDate">The date of the earliest calculation to return. Defaults to 72 months prior to current date.</param>
@@ -173,9 +189,13 @@ namespace HMRC.ESFA.Levy.Api.Client
         {
             var client = new HttpClient();
             client.BaseAddress = new Uri(baseUrl);
-            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", authToken);
+            AddAuthTokenToClient(authToken, client);
             return client;
         }
 
+        private static void AddAuthTokenToClient(string authToken, HttpClient client)
+        {
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", authToken);
+        }
     }
 }
