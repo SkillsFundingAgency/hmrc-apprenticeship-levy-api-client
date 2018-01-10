@@ -45,6 +45,18 @@ namespace HMRC.ESFA.Levy.Api.Client
         /// <summary>
         /// Checks the employment status of an individual in a payroll scheme.
         /// </summary>
+        /// <param name="authToken">The access token from SFA.DAS.TokenService.Api.Client</param>
+        /// <param name="empRef">A valid employer reference for the PAYE scheme.</param>
+        /// <param name="nino">A valid National Insurance Number (nino) for the individual being checked.</param>
+        /// <param name="fromDate">The date of the earliest calculation to return. Defaults to 72 months prior to current date.</param>
+        /// <param name="toDate">The date of the latest calculation to return. Defaults to current date.</param>
+        /// <exception cref="ApiHttpException"></exception>
+        /// <returns></returns>
+        Task<EmploymentStatus> GetEmploymentStatus(string authToken, string empRef, string nino, DateTime? fromDate = null, DateTime? toDate = null)
+
+        /// <summary>
+        /// Checks the employment status of an individual in a payroll scheme.
+        /// </summary>
         /// <param name="empRef">A valid employer reference for the PAYE scheme.</param>
         /// <param name="nino">A valid National Insurance Number (nino) for the individual being checked.</param>
         /// <param name="fromDate">The date of the earliest calculation to return. Defaults to 72 months prior to current date.</param>
