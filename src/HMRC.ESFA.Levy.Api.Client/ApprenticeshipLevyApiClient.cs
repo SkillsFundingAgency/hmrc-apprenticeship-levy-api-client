@@ -20,6 +20,11 @@ namespace HMRC.ESFA.Levy.Api.Client
         private const string DateFormat = "yyyy-MM-dd";
 
         /// <summary>
+        /// The Authorization Scheme Name
+        /// </summary>
+        public const string Scheme = "Bearer";
+
+        /// <summary>
         /// Default constuctor
         /// </summary>
         /// <param name="client">A configured HttpClient, alternatively use ApprenticeshipLevyApiClient.CreateHttpClient(token, url)</param>
@@ -66,6 +71,37 @@ namespace HMRC.ESFA.Levy.Api.Client
         /// <returns></returns>
         public async Task<LevyDeclarations> GetEmployerLevyDeclarations(string empRef, DateTime? fromDate = null, DateTime? toDate = null)
         {
+            return await GetEmployerLevyDeclarationsFromService(empRef, fromDate, toDate);
+        }
+
+        /// <summary>
+        /// Returns a list of levy declarations for a given employer reference.
+        /// </summary>
+        /// <param name="authToken">The access token from SFA.DAS.TokenService.Api.Client</param>
+        /// <param name="empRef">A valid employer reference for the PAYE scheme.</param>
+        /// <param name="fromDate">The date of the earliest calculation to return. Defaults to 72 months prior to current date.</param>
+        /// <param name="toDate">The date of the latest calculation to return. Defaults to current date.</param>
+        /// <exception cref="ApiHttpException"></exception>
+        /// <returns></returns>
+        public async Task<LevyDeclarations> GetEmployerLevyDeclarations(string authToken, string empRef, DateTime? fromDate = null,
+            DateTime? toDate = null)
+        {
+            AddAuthTokenToClient(authToken, _client);
+
+            return await GetEmployerLevyDeclarationsFromService(empRef, fromDate, toDate);
+        }
+
+        /// <summary>
+        /// Returns a list of levy declarations for a given employer reference.
+        /// </summary>
+        /// <param name="empRef">A valid employer reference for the PAYE scheme.</param>
+        /// <param name="fromDate">The date of the earliest calculation to return. Defaults to 72 months prior to current date.</param>
+        /// <param name="toDate">The date of the latest calculation to return. Defaults to current date.</param>
+        /// <exception cref="ApiHttpException"></exception>
+        /// <returns></returns>
+        private async Task<LevyDeclarations> GetEmployerLevyDeclarationsFromService(string empRef, DateTime? fromDate = null, DateTime? toDate = null)
+        {
+
             var url = $"apprenticeship-levy/epaye/{HttpUtility.UrlEncode(empRef)}/declarations";
             var parameters = HttpUtility.ParseQueryString(string.Empty);
 
@@ -195,7 +231,7 @@ namespace HMRC.ESFA.Levy.Api.Client
 
         private static void AddAuthTokenToClient(string authToken, HttpClient client)
         {
-            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", authToken);
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(Scheme, authToken);
         }
     }
 }
