@@ -56,6 +56,18 @@ namespace HMRC.ESFA.Levy.Api.Client
         Task<EnglishFractionDeclarations> GetEmployerFractionCalculations(string empRef, DateTime? fromDate = null, DateTime? toDate = null);
 
         /// <summary>
+        /// Returns a list of fraction calculations for a given employer reference.
+        /// </summary>
+        /// <param name="authToken">The access token from SFA.DAS.TokenService.Api.Client</param>
+        /// <param name="empRef">A valid employer reference for the PAYE scheme.</param>
+        /// <param name="fromDate">The date of the earliest calculation to return. Defaults to 72 months prior to current date.</param>
+        /// <param name="toDate">The date of the latest calculation to return. Defaults to current date.</param>
+        /// <exception cref="ApiHttpException"></exception>
+        /// <returns></returns>
+        Task<EnglishFractionDeclarations> GetEmployerFractionCalculations(string authToken, string empRef,
+            DateTime? fromDate = null, DateTime? toDate = null);
+
+        /// <summary>
         /// Checks the employment status of an individual in a payroll scheme.
         /// </summary>
         /// <param name="authToken">The access token from SFA.DAS.TokenService.Api.Client</param>
@@ -78,6 +90,13 @@ namespace HMRC.ESFA.Levy.Api.Client
         /// <returns></returns>
         Task<EmploymentStatus> GetEmploymentStatus(string empRef, string nino, DateTime? fromDate = null, DateTime? toDate = null);
 
+        /// <summary>
+        /// Returns the date of the most recent fraction calculation batch run.
+        /// </summary>
+        /// <param name="authToken">The access token from SFA.DAS.TokenService.Api.Client</param>
+        /// <returns></returns>
+        Task<DateTime> GetLastEnglishFractionUpdate(string authToken);
+        
         /// <summary>
         /// Returns the date of the most recent fraction calculation batch run.
         /// </summary>
