@@ -33,6 +33,19 @@ namespace HMRC.ESFA.Levy.Api.Client
         Task<LevyDeclarations> GetEmployerLevyDeclarations(string empRef, DateTime? fromDate = null, DateTime? toDate = null);
 
         /// <summary>
+        /// Returns a list of levy declarations for a given employer reference.
+        /// </summary>
+        /// <param name="authToken">The access token from SFA.DAS.TokenService.Api.Client</param>
+        /// <param name="empRef">A valid employer reference for the PAYE scheme.</param>
+        /// <param name="fromDate">The date of the earliest calculation to return. Defaults to 72 months prior to current date.</param>
+        /// <param name="toDate">The date of the latest calculation to return. Defaults to current date.</param>
+        /// <exception cref="ApiHttpException"></exception>
+        /// <returns></returns>
+        Task<LevyDeclarations> GetEmployerLevyDeclarations(string authToken, string empRef,
+            DateTime? fromDate = null,
+            DateTime? toDate = null);
+
+        /// <summary>
         /// Returns a list of fraction calculations for a given employer reference.
         /// </summary>
         /// <param name="empRef">A valid employer reference for the PAYE scheme.</param>
