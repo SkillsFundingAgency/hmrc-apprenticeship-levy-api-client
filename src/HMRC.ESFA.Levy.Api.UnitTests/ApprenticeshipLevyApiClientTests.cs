@@ -33,13 +33,12 @@ namespace HMRC.ESFA.Levy.Api.UnitTests
                 EmpRef = "000/AA00000",
                 Declarations = expectedDeclarations
             };
+
             var mockHttp = new MockHttpMessageHandler();
             mockHttp.When($"http://localhost/apprenticeship-levy/epaye/{HttpUtility.UrlEncode(expected.EmpRef)}/declarations")
                 .Respond("application/json", JsonConvert.SerializeObject(expected));
 
-            var httpClient = mockHttp.ToHttpClient();
-            httpClient.BaseAddress = new Uri("http://localhost/");
-            var client = new ApprenticeshipLevyApiClient(httpClient);
+            var client = GetApprenticeshipLevyApiClient(mockHttp);
 
             // Act
             var declarations = await client.GetEmployerLevyDeclarations(expected.EmpRef);
@@ -51,7 +50,7 @@ namespace HMRC.ESFA.Levy.Api.UnitTests
         }
 
         [Test]
-        public async Task ShouldThrowExceptionIfEmployerNotFound()
+        public void ShouldThrowExceptionIfEmployerNotFound()
         {
             // Arrange
             var expected = new LevyDeclarations
@@ -62,10 +61,7 @@ namespace HMRC.ESFA.Levy.Api.UnitTests
             mockHttp.When($"http://localhost/apprenticeship-levy/epaye/{HttpUtility.UrlEncode(expected.EmpRef)}/declarations?fromDate=2017-04-01")
                 .Respond(HttpStatusCode.NotFound, x => new StringContent(""));
 
-            var httpClient = mockHttp.ToHttpClient();
-            httpClient.BaseAddress = new Uri("http://localhost/");
-
-            var client = new ApprenticeshipLevyApiClient(httpClient);
+            var client = GetApprenticeshipLevyApiClient(mockHttp);
 
             // Act
             var ex = Assert.ThrowsAsync<ApiHttpException>(() => client.GetEmployerLevyDeclarations(expected.EmpRef));
@@ -95,7 +91,8 @@ namespace HMRC.ESFA.Levy.Api.UnitTests
                 EmpRef = "000/AA00000",
                 Declarations = expectedDeclarations
             };
-             var mockHttp = new MockHttpMessageHandler();
+
+            var mockHttp = new MockHttpMessageHandler();
             mockHttp.When($"http://localhost/apprenticeship-levy/epaye/{HttpUtility.UrlEncode(expected.EmpRef)}/declarations")
                 .Respond("application/json", JsonConvert.SerializeObject(expected));
 
@@ -103,9 +100,7 @@ namespace HMRC.ESFA.Levy.Api.UnitTests
             mockDeclarationTypeProcessor.Setup(x => x.ProcessDeclarationsByPayrollPeriod(It.IsAny<List<Declaration>>(), It.IsAny<DateTime>()))
                 .Returns(expectedDeclarationsForProcessor);
 
-            var httpClient = mockHttp.ToHttpClient();
-            httpClient.BaseAddress = new Uri("http://localhost/");
-            var client = new ApprenticeshipLevyApiClient(httpClient, mockDeclarationTypeProcessor.Object);
+            var client = GetApprenticeshipLevyApiClient(mockHttp, mockDeclarationTypeProcessor.Object);
 
             // Act
             var declarations = await client.GetEmployerLevyDeclarations(expected.EmpRef);
@@ -113,7 +108,6 @@ namespace HMRC.ESFA.Levy.Api.UnitTests
             // Assert
             mockHttp.VerifyNoOutstandingExpectation();
             mockHttp.VerifyNoOutstandingRequest();
-            mockDeclarationTypeProcessor.VerifyAll();
             mockDeclarationTypeProcessor.VerifyAll();
             Assert.AreEqual(expected.EmpRef, declarations.EmpRef);
             Assert.AreEqual(LevyDeclarationSubmissionStatus.UnprocessedSubmission, declarations.Declarations[0].LevyDeclarationSubmissionStatus);
@@ -138,9 +132,7 @@ namespace HMRC.ESFA.Levy.Api.UnitTests
             mockHttp.When($"http://localhost/apprenticeship-levy/epaye/{HttpUtility.UrlEncode(expected.Empref)}/fractions")
                 .Respond("application/json", JsonConvert.SerializeObject(expected));
 
-            var httpClient = mockHttp.ToHttpClient();
-            httpClient.BaseAddress = new Uri("http://localhost/");
-            var client = new ApprenticeshipLevyApiClient(httpClient);
+            var client = GetApprenticeshipLevyApiClient(mockHttp);
 
             // Act
             var declarations = await client.GetEmployerFractionCalculations(expected.Empref);
@@ -161,9 +153,7 @@ namespace HMRC.ESFA.Levy.Api.UnitTests
             mockHttp.When($"http://localhost/apprenticeship-levy/fraction-calculation-date")
                 .Respond("application/json", JsonConvert.SerializeObject(expected));
 
-            var httpClient = mockHttp.ToHttpClient();
-            httpClient.BaseAddress = new Uri("http://localhost/");
-            var client = new ApprenticeshipLevyApiClient(httpClient);
+            var client = GetApprenticeshipLevyApiClient(mockHttp);
 
             // Act
             var date = await client.GetLastEnglishFractionUpdate();
@@ -171,6 +161,19 @@ namespace HMRC.ESFA.Levy.Api.UnitTests
             // Assert
             mockHttp.VerifyNoOutstandingExpectation();
             Assert.AreEqual(expected, date);
+        }
+
+        private static ApprenticeshipLevyApiClient GetApprenticeshipLevyApiClient(MockHttpMessageHandler mockHttp,
+            IPaymentStatusProcessor paymentStatusProcessor = null)
+        {
+            var httpClient = mockHttp.ToHttpClient();
+            httpClient.BaseAddress = new Uri("http://localhost/");
+
+            var client = paymentStatusProcessor != null
+                ? new ApprenticeshipLevyApiClient(httpClient, paymentStatusProcessor)
+                : new ApprenticeshipLevyApiClient(httpClient);
+
+            return client;
         }
     }
 
