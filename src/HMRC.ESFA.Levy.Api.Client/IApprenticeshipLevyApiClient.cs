@@ -23,6 +23,15 @@ namespace HMRC.ESFA.Levy.Api.Client
         Task<EmpRefLevyInformation> GetEmployerDetails(string empRef);
 
         /// <summary>
+        /// Returns more details about an empref including details about the employer and a list of available endpoints that apply to the empref.
+        /// </summary>
+        /// <param name="authToken">The access token from SFA.DAS.TokenService.Api.Client</param>
+        /// <param name="empRef">A valid employer reference for the PAYE scheme.</param>
+        /// <exception cref="ApiHttpException"></exception>
+        /// <returns></returns>
+        Task<EmpRefLevyInformation> GetEmployerDetails(string authToken, string empRef);
+
+        /// <summary>
         /// Returns a list of levy declarations for a given employer reference.
         /// </summary>
         /// <param name="empRef">A valid employer reference for the PAYE scheme.</param>
