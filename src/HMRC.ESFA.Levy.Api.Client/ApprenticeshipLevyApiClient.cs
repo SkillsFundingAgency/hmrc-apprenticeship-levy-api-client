@@ -28,7 +28,6 @@ namespace HMRC.ESFA.Levy.Api.Client
         /// Default constuctor
         /// </summary>
         /// <param name="client">A configured HttpClient, alternatively use ApprenticeshipLevyApiClient.CreateHttpClient(token, url)</param>
-        /// <param name="paymentStatusProcessor"></param>
         public ApprenticeshipLevyApiClient(HttpClient client) : this(client, new PaymentStatusProcessor(new CutoffDatesService()))
         {
         }
@@ -50,6 +49,19 @@ namespace HMRC.ESFA.Levy.Api.Client
         }
 
         /// <summary>
+        /// Returns a list of valid links indexed by empref in HAL format
+        /// </summary>
+        /// <param name="authToken">The access token from SFA.DAS.TokenService.Api.Client</param>
+        /// <exception cref="ApiHttpException"></exception>
+        /// <returns></returns>
+        public async Task<EmprefDiscovery> GetAllEmployers(string authToken)
+        {
+            AddAuthTokenToClient(authToken, _client);
+
+            return await GetAllEmployers();
+        }
+
+        /// <summary>
         /// Returns more details about an empref including details about the employer and a list of available endpoints that apply to the empref.
         /// </summary>
         /// <param name="empRef">A valid employer reference for the PAYE scheme.</param>
@@ -59,6 +71,20 @@ namespace HMRC.ESFA.Levy.Api.Client
         {
             var url = $"apprenticeship-levy/epaye/{HttpUtility.UrlEncode(empRef)}";
             return await _client.Get<EmpRefLevyInformation>(url);
+        }
+
+        /// <summary>
+        /// Returns more details about an empref including details about the employer and a list of available endpoints that apply to the empref.
+        /// </summary>
+        /// <param name="authToken">The access token from SFA.DAS.TokenService.Api.Client</param>
+        /// <param name="empRef">A valid employer reference for the PAYE scheme.</param>
+        /// <exception cref="ApiHttpException"></exception>
+        /// <returns></returns>
+        public async Task<EmpRefLevyInformation> GetEmployerDetails(string authToken, string empRef)
+        {
+            AddAuthTokenToClient(authToken, _client);
+
+            return await GetEmployerDetails(empRef);
         }
 
         /// <summary>
