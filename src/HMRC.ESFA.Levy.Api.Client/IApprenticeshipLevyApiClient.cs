@@ -15,6 +15,14 @@ namespace HMRC.ESFA.Levy.Api.Client
         Task<EmprefDiscovery> GetAllEmployers();
 
         /// <summary>
+        /// Returns a list of valid links indexed by empref in HAL format
+        /// </summary>
+        /// <param name="authToken">The access token from SFA.DAS.TokenService.Api.Client</param>
+        /// <exception cref="ApiHttpException"></exception>
+        /// <returns></returns>
+        Task<EmprefDiscovery> GetAllEmployers(string authToken);
+
+        /// <summary>
         /// Returns more details about an empref including details about the employer and a list of available endpoints that apply to the empref.
         /// </summary>
         /// <param name="empRef">A valid employer reference for the PAYE scheme.</param>
