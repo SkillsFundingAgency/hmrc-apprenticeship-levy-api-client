@@ -50,7 +50,7 @@ before_build:
 
 build_script:
   # output will be in ./src/bin/Release/netstandard2.0/publish
-  - cmd: dotnet publish --configuration Release --no-restore
+  - cmd: dotnet publish --configuration Release -f netstandard2.0 --no-restore
 
 # scripts to run after build
 after_build:
