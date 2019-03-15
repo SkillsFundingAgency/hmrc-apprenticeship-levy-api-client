@@ -1,7 +1,9 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   
   <PropertyGroup>
-    <TargetFramework>netcoreapp2.1</TargetFramework>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <IsTestProject>true</IsTestProject>
     <AssemblyTitle>HMRC.ESFA.Levy.Api.UnitTests</AssemblyTitle>
     <Product>HMRC.ESFA.Levy.Api.UnitTests</Product>
     <Copyright>Copyright ©  2017</Copyright>
@@ -11,18 +13,17 @@
   </PropertyGroup>
   
   <ItemGroup>
-    <PackageReference Include="System.Data.DataSetExtensions" Version="4.*" />
-    <PackageReference Include="Microsoft.CSharp" Version="4.*" />
-  <PackageReference Include="Castle.Core" Version="4.3.1" />
+    <PackageReference Include="Castle.Core" Version="4.3.1" />
     <PackageReference Include="Moq" Version="4.10.1" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.1" />
-    <PackageReference Include="NUnit" Version="3.11.0" />
     <PackageReference Include="RichardSzalay.MockHttp" Version="5.0.0" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.0.1" />
+    <PackageReference Include="NUnit" Version="3.11.0" />
   </ItemGroup>
   
   <ItemGroup>
-    <ProjectReference Include="..\HMRC.ESFA.Levy.Api.Client\HMRC.ESFA.Levy.Api.Client.csproj" />
-    <ProjectReference Include="..\HMRC.ESFA.Levy.Api.Types\HMRC.ESFA.Levy.Api.Types.csproj" />
+    <ProjectReference Include="..\..\src\HMRC.ESFA.Levy.Api.Client\HMRC.ESFA.Levy.Api.Client.csproj" />
+    <ProjectReference Include="..\..\src\HMRC.ESFA.Levy.Api.Types\HMRC.ESFA.Levy.Api.Types.csproj" />
   </ItemGroup>
 
 </Project>

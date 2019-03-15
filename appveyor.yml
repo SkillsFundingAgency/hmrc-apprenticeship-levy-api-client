@@ -49,21 +49,14 @@ platform: Any CPU
 # build Configuration, i.e. Debug, Release, etc.
 configuration: Release
 
-build:
-  project: src\HMRC.ESFA.Levy.Api.sln       # path to Visual Studio solution or project
-  publish_wap: false              # package Web Application Projects (WAP) for Web Deploy
-  publish_wap_xcopy: false        # package Web Application Projects (WAP) for XCopy deployment
-  publish_azure: false            # package Azure Cloud Service projects and push to artifacts
-  publish_nuget: false             # package projects with .nuspec files and push to artifacts
-
-  # MSBuild verbosity level quiet|minimal|normal|detailed
-  verbosity: normal
-  parallel: true
-
 # scripts to run before build
 before_build:
-  - ps: If (Test-Path "$env:package_dir") { Remove-Item "$env:package_dir" -Recurse -Force -ErrorAction SilentlyContinue }
-  - nuget restore src\HMRC.ESFA.Levy.Api.sln
+  - cmd: dotnet --version
+  - cmd: dotnet restore ./src --verbosity m
+
+build_script:
+  # output will be in ./src/bin/Release/netstandard2.0/publish
+  - cmd: dotnet publish --configuration Release --no-restore
 
 # scripts to run after build
 after_build:
@@ -74,10 +67,6 @@ after_build:
 artifacts:
   # pushing all *.nupkg files in directory
   - path: 'NuGet_Packages\*.nupkg'
-
-# preserve "packages" directory in the root of build folder but will reset it if packages.config is modified
-cache:
-  - src\packages -> **\packages.config
 
 #---------------------------------#
 #     deployment configuration    #

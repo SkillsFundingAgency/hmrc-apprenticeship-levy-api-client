@@ -1,13 +1,18 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio 15
+VisualStudioVersion = 15.0.28307.421
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HMRC.ESFA.Levy.Api.Types", "HMRC.ESFA.Levy.Api.Types\HMRC.ESFA.Levy.Api.Types.csproj", "{C989B372-4BCD-42A0-BE30-9275BF4656E4}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HMRC.ESFA.Levy.Api.Types", "src\HMRC.ESFA.Levy.Api.Types\HMRC.ESFA.Levy.Api.Types.csproj", "{C989B372-4BCD-42A0-BE30-9275BF4656E4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HMRC.ESFA.Levy.Api.Client", "HMRC.ESFA.Levy.Api.Client\HMRC.ESFA.Levy.Api.Client.csproj", "{74E756AB-08E7-4100-A9FD-2D54847A5EBB}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HMRC.ESFA.Levy.Api.Client", "src\HMRC.ESFA.Levy.Api.Client\HMRC.ESFA.Levy.Api.Client.csproj", "{74E756AB-08E7-4100-A9FD-2D54847A5EBB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HMRC.ESFA.Levy.Api.UnitTests", "HMRC.ESFA.Levy.Api.UnitTests\HMRC.ESFA.Levy.Api.UnitTests.csproj", "{D0385873-8A3D-4A14-A150-BDA58AC9A5FD}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HMRC.ESFA.Levy.Api.UnitTests", "test\HMRC.ESFA.Levy.Api.UnitTests\HMRC.ESFA.Levy.Api.UnitTests.csproj", "{D0385873-8A3D-4A14-A150-BDA58AC9A5FD}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution files", "Solution files", "{A022D30B-29CA-4973-939B-C4E2765F196E}"
+	ProjectSection(SolutionItems) = preProject
+		appveyor.yml = appveyor.yml
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -30,5 +35,8 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {E1622FC1-DEFA-4BCE-B87C-988D0DA6E7AA}
 	EndGlobalSection
 EndGlobal
