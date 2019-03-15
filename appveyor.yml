@@ -43,6 +43,8 @@ assembly_info:
 #       build configuration       #
 #---------------------------------#
 
+build: off
+
 # scripts to run before build
 before_build:
   - cmd: dotnet --version
