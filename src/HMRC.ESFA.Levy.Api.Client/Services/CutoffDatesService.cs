@@ -3,7 +3,7 @@ using HMRC.ESFA.Levy.Api.Types;
 
 namespace HMRC.ESFA.Levy.Api.Client.Services
 {
-    internal class CutoffDatesService : ICutoffDatesService
+    public class CutoffDatesService : ICutoffDatesService
     {
         private const int LastDayInMonthForSubmission = 19;
         private const int DayInMonthForSubmissionProcessing = 23;

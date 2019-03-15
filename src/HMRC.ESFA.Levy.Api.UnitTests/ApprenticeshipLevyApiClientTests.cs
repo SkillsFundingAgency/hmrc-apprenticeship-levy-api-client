@@ -163,8 +163,7 @@ namespace HMRC.ESFA.Levy.Api.UnitTests
             Assert.AreEqual(expected, date);
         }
 
-        private static ApprenticeshipLevyApiClient GetApprenticeshipLevyApiClient(MockHttpMessageHandler mockHttp,
-            IPaymentStatusProcessor paymentStatusProcessor = null)
+        private static ApprenticeshipLevyApiClient GetApprenticeshipLevyApiClient(MockHttpMessageHandler mockHttp, IPaymentStatusProcessor paymentStatusProcessor = null)
         {
             var httpClient = mockHttp.ToHttpClient();
             httpClient.BaseAddress = new Uri("http://localhost/");

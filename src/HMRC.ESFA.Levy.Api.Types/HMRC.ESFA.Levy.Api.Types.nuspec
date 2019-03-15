@@ -4,8 +4,8 @@
     <id>HMRC.ESFA.Levy.Api.Types</id>
     <version>$version$</version>
     <title>HMRC Apprenticeship Levy API Types</title>
-    <authors>scottcowan</authors>
-    <owners>scottcowan</owners>
+    <authors>scottcowan, soharadesign</authors>
+    <owners>scottcowan, soharadesign</owners>
     <licenseUrl>http://www.apache.org/licenses/LICENSE-2.0.html</licenseUrl>
     <projectUrl>https://github.com/SkillsFundingAgency/hmrc-apprenticeship-levy-api-client</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
@@ -14,12 +14,12 @@
     <tags>HMRC Apprenticeship API</tags>
     <language>en-GB</language>
     <dependencies>
-      <group targetFramework=".NETFramework4.5.2">
+      <group targetFramework="netstandard2.0">
         <dependency id="Newtonsoft.Json" version="9.0.1" />
       </group>
     </dependencies>
   </metadata>
   <files>
-    <file src="bin\Release\HMRC.ESFA.Levy.Api.Types.dll" target="lib\net452" />
+    <file src="bin\Release\HMRC.ESFA.Levy.Api.Types.dll" target="lib\netstandard2.0" />
   </files>
 </package>

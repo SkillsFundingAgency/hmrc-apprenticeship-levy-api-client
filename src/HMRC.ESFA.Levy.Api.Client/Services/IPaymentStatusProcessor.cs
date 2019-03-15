@@ -4,7 +4,7 @@ using HMRC.ESFA.Levy.Api.Types;
 
 namespace HMRC.ESFA.Levy.Api.Client.Services
 {
-    internal interface IPaymentStatusProcessor
+    public interface IPaymentStatusProcessor
     {
         List<Declaration> ProcessDeclarationsByPayrollPeriod(List<Declaration> declarations, DateTime dateTimeProcessingInvoked);
     }
