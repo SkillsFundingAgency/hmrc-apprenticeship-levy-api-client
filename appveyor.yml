@@ -68,7 +68,7 @@ artifacts:
 deploy:
   provider: NuGet
   api_key:
-    secure: pFTcX0gBaJiP3nLZhvycW+DBzY2J3/UtOR1sB78NgzTsO3wMhS8ndBTs3DF60Idx
+    secure: ibqTJCWGeDimgS77s+BUYJquesF1nBz2pzDodXMA/1Wce5RpdOhu4E7cwbJj2P6Q    # encrypted nuget API Key. Encrypted using Appveyor Encrypt YAML page.
   skip_symbols: true
   symbol_server:           # remove to push symbols to SymbolSource.org
   artifact: /.*\.nupkg/
