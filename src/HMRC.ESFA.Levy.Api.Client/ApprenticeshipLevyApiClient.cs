@@ -32,7 +32,7 @@ namespace HMRC.ESFA.Levy.Api.Client
         {
         }
 
-        internal ApprenticeshipLevyApiClient(HttpClient client, IPaymentStatusProcessor paymentStatusProcessor)
+        public ApprenticeshipLevyApiClient(HttpClient client, IPaymentStatusProcessor paymentStatusProcessor)
         {
             _client = client;
             _paymentStatusProcessor = paymentStatusProcessor;
