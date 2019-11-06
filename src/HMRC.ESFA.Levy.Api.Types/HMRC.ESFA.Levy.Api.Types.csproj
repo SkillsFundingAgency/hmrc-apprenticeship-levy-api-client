@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net46</TargetFramework>
+    <TargetFramework>netstandard2.0</TargetFramework>
     <Authors>DAS</Authors>
     <Product>HMRC Apprenticeship Levy API Types</Product>
     <Description>Returns apprenticeship levy information from HMRC</Description>
