@@ -5,7 +5,7 @@ using HMRC.ESFA.Levy.Api.Types;
 
 namespace HMRC.ESFA.Levy.Api.Client.Services
 {
-    internal class PaymentStatusProcessor : IPaymentStatusProcessor
+    public class PaymentStatusProcessor : IPaymentStatusProcessor
     {
         private readonly ICutoffDatesService _cutoffDatesService;
 
