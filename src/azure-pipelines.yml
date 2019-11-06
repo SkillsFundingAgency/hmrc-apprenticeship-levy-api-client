@@ -34,14 +34,7 @@ steps:
   displayName: dotnet build
   inputs:
     projects: 'src/**/*.csproj'
-    arguments: '--configuration $(buildConfiguration)  --no-restore'
-    
-- task: DotNetCoreCLI@2
-  displayName: dotnet test
-  inputs:
-    command: test
-    projects: '**/*.UnitTests.csproj'
-    arguments: '--configuration $(buildConfiguration) --no-build'
+    arguments: '--configuration $(buildConfiguration)  --no-restore'    
 
 - task: DotNetCoreCLI@2
   displayName: 'dotnet pack'
