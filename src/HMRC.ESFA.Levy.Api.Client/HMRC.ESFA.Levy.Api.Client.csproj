@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net46</TargetFramework>
+    <TargetFramework>netstandard20</TargetFramework>
     <PackageId>HMRC.ESFA.Levy.Api.Client</PackageId>
     <Description>Returns apprenticeship levy information from HMRC</Description>
     <Product>HMRC Apprenticeship Levy API Client</Product>
@@ -13,10 +13,6 @@
     <ProjectReference Include="..\HMRC.ESFA.Levy.Api.Types\HMRC.ESFA.Levy.Api.Types.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Newtonsoft.Json" Version="9.0.1" />
-	<PackageReference Include="System.Net.Http" Version="4.0.0" />
-  </ItemGroup>
-  <ItemGroup>
-    <Reference Include="System.Web" />
+	<PackageReference Include="System.Net.Http" Version="4.3.4" />
   </ItemGroup>
 </Project>
