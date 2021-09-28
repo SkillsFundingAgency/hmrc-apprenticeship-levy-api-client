@@ -15,6 +15,7 @@ variables:
 
 pool:
   name: 'DAS - Continuous Integration Agents'
+  demands: LATEST_DOTNET_VERSION -equals 2.2
 
 steps:
 - task: gitversion/setup@0
