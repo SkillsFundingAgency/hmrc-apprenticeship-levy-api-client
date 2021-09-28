@@ -1,4 +1,3 @@
-name: hmrc-apprenticeship-levy-api-client
 trigger:
   batch: true
   branches:
@@ -15,7 +14,7 @@ variables:
   buildPlatform: 'anycpu'
 
 pool:
-  name: 'Continuous Integration 02 - SSD - 160ACU'
+  name: 'DAS - Continuous Integration Agents'
 
 steps:
 - task: gittools.gitversion.gitversion-task.GitVersion@5
