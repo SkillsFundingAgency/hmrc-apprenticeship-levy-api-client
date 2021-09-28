@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net46</TargetFramework>
+    <TargetFramework>netstandard20</TargetFramework>
     <Authors>DAS</Authors>
     <Product>HMRC Apprenticeship Levy API Types</Product>
     <Description>Returns apprenticeship levy information from HMRC</Description>
@@ -8,9 +8,8 @@
     <PackageProjectUrl>https://github.com/SkillsFundingAgency/hmrc-apprenticeship-levy-api-client</PackageProjectUrl>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Newtonsoft.Json" Version="9.0.1" />
-  </ItemGroup>
-  <ItemGroup>
-    <Reference Include="System.Web" />
+    <PackageReference Include="Boxed.AspNetCore" Version="4.0.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageReference Include="Opw.HttpExceptions.AspNetCore" Version="2.3.0" />
   </ItemGroup>
 </Project>
