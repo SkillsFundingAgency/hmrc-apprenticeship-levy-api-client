@@ -8,7 +8,6 @@
     <Company>DAS</Company>
     <PackageLicenseUrl>https://github.com/SkillsFundingAgency/hmrc-apprenticeship-levy-api-client/blob/master/LICENSE</PackageLicenseUrl>
     <PackageProjectUrl>https://github.com/SkillsFundingAgency/hmrc-apprenticeship-levy-api-client</PackageProjectUrl>
-    <Version>2.0.0</Version>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\HMRC.ESFA.Levy.Api.Types\HMRC.ESFA.Levy.Api.Types.csproj" />
