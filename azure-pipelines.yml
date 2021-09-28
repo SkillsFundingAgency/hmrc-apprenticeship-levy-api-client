@@ -17,9 +17,16 @@ pool:
   name: 'DAS - Continuous Integration Agents'
 
 steps:
-- task: gittools.gitversion.gitversion-task.GitVersion@5
-  displayName: GitVersion
+- task: gitversion/setup@0
+  displayName: gitversion/setup
   inputs:
+    versionSpec: 5.5.x
+
+- task: gitversion/execute@0
+  displayName: gitversion/execute
+  inputs:
+    useConfigFile: true
+    configFilePath: GitVersion.yml
     updateAssemblyInfo: true
 
 - task: DotNetCoreCLI@2
@@ -33,7 +40,7 @@ steps:
   displayName: dotnet build
   inputs:
     projects: 'src/**/*.csproj'
-    arguments: '--configuration $(buildConfiguration)  --no-restore'    
+    arguments: '--configuration $(buildConfiguration)  --no-restore'
 
 - task: DotNetCoreCLI@2
   displayName: 'dotnet pack'
