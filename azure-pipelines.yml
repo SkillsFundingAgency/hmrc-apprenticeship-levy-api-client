@@ -43,6 +43,12 @@ steps:
     arguments: '--configuration $(buildConfiguration)  --no-restore'
 
 - task: DotNetCoreCLI@2
+  inputs:
+    command: test
+    projects: 'src/**/*.UnitTests.csproj'
+    arguments: '--configuration $(buildConfiguration)  --no-build'
+
+- task: DotNetCoreCLI@2
   displayName: 'dotnet pack'
   inputs:
     command: pack
