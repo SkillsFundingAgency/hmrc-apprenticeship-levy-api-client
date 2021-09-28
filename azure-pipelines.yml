@@ -46,14 +46,16 @@ steps:
   displayName: 'dotnet pack'
   inputs:
     command: pack
-    packagesToPack: src/HMRC.ESFA.Levy.Api.Types/HMRC.ESFA.Levy.Api.Types.csproj
+    searchPatternPack: 'src/HMRC.ESFA.Levy.Api.Types/HMRC.ESFA.Levy.Api.Types.csproj;src/HMRC.ESFA.Levy.Api.Client/HMRC.ESFA.Levy.Api.Client.csproj'
     versioningScheme: byBuildNumber
 
 - task: CopyFiles@2
   displayName: 'Copy Files to: $(Build.ArtifactStagingDirectory)'
   inputs:
-    SourceFolder: src/HMRC.ESFA.Levy.Api.Types
-    Contents: '**/*.nupkg'
+    SourceFolder: src
+    Contents: |
+      **/HMRC.ESFA.Levy.Api.Types.*.nupkg
+      **/HMRC.ESFA.Levy.Api.Client.*.nupkg
     TargetFolder: '$(Build.ArtifactStagingDirectory)'
 
 - task: PublishBuildArtifacts@1
