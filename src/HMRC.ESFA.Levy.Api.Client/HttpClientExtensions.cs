@@ -24,10 +24,7 @@ namespace HMRC.ESFA.Levy.Api.Client
 
         internal static async Task<T> Get<T>(this HttpClient httpClient, string url)
         {
-                var response = await httpClient.SendAsync(new HttpRequestMessage(HttpMethod.Get, url)
-                {
-                    Headers = { {"accept", Accept } }
-                });
+                var response = await httpClient.SendAsync(new HttpRequestMessage(HttpMethod.Get, url));
                 await EnsureSuccessfulResponse(response);
 
             var value = await response.Content.ReadAsStringAsync();
