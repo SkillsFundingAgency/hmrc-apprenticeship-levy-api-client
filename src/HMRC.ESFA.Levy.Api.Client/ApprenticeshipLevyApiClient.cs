@@ -37,8 +37,8 @@ namespace HMRC.ESFA.Levy.Api.Client
             _client = client;
             _paymentStatusProcessor = paymentStatusProcessor;
 
-            client.DefaultRequestHeaders.Accept.Clear();
-            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/vnd.hmrc.1.0+json"));
+            _client.DefaultRequestHeaders.Accept.Clear();
+            _client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/vnd.hmrc.1.0+json"));
         }
 
         /// <summary>
