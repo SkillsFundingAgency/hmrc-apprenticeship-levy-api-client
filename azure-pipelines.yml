@@ -2,49 +2,17 @@ trigger:
   batch: true
   branches:
     include:
-      - "*"
-
-pr: none
-
-workspace:
-    clean: all
-
-variables:
-  buildConfiguration: 'release'
-  buildPlatform: 'anycpu'
-
-pool:
-  name: DAS - Continuous Integration Agents
-  demands: LATEST_DOTNET_VERSION -equals 3.1
+      - "master"
 
 resources:
-  repositories:
-  - repository: das-platform-building-blocks
-    type: github
-    name: SkillsFundingAgency/das-platform-building-blocks
-    ref: refs/tags/0.4.10
-    endpoint: SkillsFundingAgency
+    repositories:
+    - repository: das-platform-building-blocks
+      type: github
+      name: SkillsFundingAgency/das-platform-building-blocks
+      ref: refs/tags/0.4.37
+      endpoint: SkillsFundingAgency
 
-steps:
-- template: azure-pipelines-templates/build/step/gitversion.yml@das-platform-building-blocks
-
-- template: azure-pipelines-templates/build/step/app-build.yml@das-platform-building-blocks
-
-- task: DotNetCoreCLI@2
-  displayName: 'dotnet pack'
-  inputs:
-    command: pack
-    searchPatternPack: 'src/HMRC.ESFA.Levy.Api.Types/HMRC.ESFA.Levy.Api.Types.csproj;src/HMRC.ESFA.Levy.Api.Client/HMRC.ESFA.Levy.Api.Client.csproj'
-    versioningScheme: byBuildNumber
-
-- task: CopyFiles@2
-  displayName: 'Copy Files to: $(Build.ArtifactStagingDirectory)'
-  inputs:
-    SourceFolder: src
-    Contents: |
-      **/HMRC.ESFA.Levy.Api.Types.*.nupkg
-      **/HMRC.ESFA.Levy.Api.Client.*.nupkg
-    TargetFolder: '$(Build.ArtifactStagingDirectory)'
-
-- task: PublishBuildArtifacts@1
-  displayName: 'Publish Artifact: drop'
+stages:
+- stage: Build
+  jobs:
+  - template: pipeline-templates/job/code-build.yml

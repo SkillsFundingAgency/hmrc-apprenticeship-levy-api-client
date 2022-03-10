@@ -1,0 +1,39 @@
+jobs:
+- job: 'CodeBuild'
+  pool:
+    name: DAS - Continuous Integration Agents
+    demands: LATEST_DOTNET_VERSION -equals 3.1
+  workspace:
+    clean: all
+  variables:
+    - group: BUILD Management Resources
+    - name: buildConfiguration 
+      value: 'release'
+    - name: buildPlatform
+      value: 'any cpu'
+
+  steps:
+  - template: azure-pipelines-templates/build/step/gitversion.yml@das-platform-building-blocks
+
+  - template: azure-pipelines-templates/build/step/app-build.yml@das-platform-building-blocks
+    parameters:
+        SonarCloudProjectKey: SkillsFundingAgency_hmrc-apprenticeship-levy-api-client
+
+  - task: DotNetCoreCLI@2
+    displayName: 'dotnet pack'
+    inputs:
+      command: pack
+      searchPatternPack: 'src/HMRC.ESFA.Levy.Api.Types/HMRC.ESFA.Levy.Api.Types.csproj;src/HMRC.ESFA.Levy.Api.Client/HMRC.ESFA.Levy.Api.Client.csproj'
+      versioningScheme: byBuildNumber
+
+  - task: CopyFiles@2
+    displayName: 'Copy Files to: $(Build.ArtifactStagingDirectory)'
+    inputs:
+      SourceFolder: src
+      Contents: |
+        **/HMRC.ESFA.Levy.Api.Types.*.nupkg
+        **/HMRC.ESFA.Levy.Api.Client.*.nupkg
+      TargetFolder: '$(Build.ArtifactStagingDirectory)'
+
+  - task: PublishBuildArtifacts@1
+    displayName: 'Publish Artifact: drop'
